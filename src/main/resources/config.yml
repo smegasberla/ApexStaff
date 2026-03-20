@@ -1,0 +1,28 @@
+#
+#      ▄▄▄▄                      ▄▄▄▄▄▄▄              ▄▄   ▄▄
+#    ▄██▀▀██▄                   █████▀▀▀  ██         ██   ██
+#    ███  ███ ████▄ ▄█▀█▄ ██ ██  ▀████▄  ▀██▀▀ ▀▀█▄ ▀██▀ ▀██▀
+#    ███▀▀███ ██ ██ ██▄█▀  ███     ▀████  ██  ▄█▀██  ██   ██
+#    ███  ███ ████▀ ▀█▄▄▄ ██ ██ ███████▀  ██  ▀█▄██  ██   ██
+#             ██
+#             ▀▀
+
+
+# GENERAL MESSAGES:
+player-offline: "&c{target} is currently offline or doesen't exist!"
+wrong-arguments: "&cYou typed the wrong amount of arguments!"
+no-permission: "&cYou dont have permission to run this command!"
+only-players: "&cOnly players can run this command!"
+
+# RELOAD MESSAGES:
+successfully-reloaded: "&aYou have successfully reloaded the plugin!"
+
+# VANISH MESSAGES:
+vanish-message: "&aYou have successfully vanished!"
+exit-vanish: "&cYou are not vanished anymore!"
+target-vanished: "&aYou got vanished by {player}!"
+target-unvanished: "&cYou got unvanished by {player}!"
+succesfully-vanished: "&aYou have successfully vanished {target}!"
+successfully-unvanished: "&cYou have successfully unvanished {target}!"
+
+

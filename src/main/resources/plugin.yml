@@ -1,0 +1,32 @@
+name: ApexStaff
+version: '0.1'
+main: me.smegasberla.apexStaff.ApexStaff
+api-version: '1.21'
+prefix: PhantomThread
+authors: [ smegasberla ]
+description: High performance utilities and QoL features for server staff.
+commands:
+  apexstaff:
+    description: Main ApexStaff command
+    usage: /<command> [vanish|reload]
+    aliases: ax
+    permission: apexstaff.admin
+
+permissions:
+  apexstaff.*:
+    description: Access all ApexStaff commands
+    default: op
+    children:
+      apexstaff.admin: true
+      apexstaff.reload: true
+      apexstaff.vanish: true
+
+  apexstaff.admin:
+    description: Access ApexStaff main command
+    default: op
+  apexstaff.reload:
+    description: Access /apexstaff reload command
+    default: op
+  apexstaff.vanish:
+    description: Access /apexstaff vanish {player} command
+    default: op
