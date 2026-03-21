@@ -1,0 +1,177 @@
+=====================================================
+            APEXSTAFF PLUGIN SPECIFICATIONS
+=====================================================
+
+MAIN COMMAND: /apexstaff (Aliases: /as, /staff)
+
+-----------------------------------------------------
+1. STEALTH & INVESTIGATION
+-----------------------------------------------------
+/as vanish
+- Permission: apexstaff.vanish
+- Action: Toggles visibility. Hides join/quit messages.
+
+/as inspect <player>
+- Permission: apexstaff.inspect
+- Action: Opens a GUI showing the player's live inventory,
+  armor, health, and hunger.
+
+/as follow <player>
+- Permission: apexstaff.follow
+- Action: Silently teleports you to the player's location
+  every tick. Toggle off by moving or re-typing.
+
+/as mount <player>
+- Permission: apexstaff.mount
+- Action: Silently "rides" the player as a passenger to
+  see exactly where they are looking.
+
+/as xraycheck
+- Permission: apexstaff.xray
+- Action: Lists players with suspicious Diamond-to-Stone
+  mining ratios.
+
+-----------------------------------------------------
+2. DISCIPLINE & CONTROL
+-----------------------------------------------------
+/as freeze <player>
+- Permission: apexstaff.freeze
+- Action: Locks player in place. Sends a warning on
+  their screen to "Join Discord/Wait for Staff."
+
+/as notes <player> [add/list/remove] [text]
+- Permission: apexstaff.notes
+- Action: Internal staff database to track suspicious
+  behavior across sessions.
+
+/as staffchat <message> (Alias: /sc)
+- Permission: apexstaff.staffchat
+- Action: Sends a message visible only to users with
+  the staffchat permission.
+
+-----------------------------------------------------
+3. CHAT & SERVER UTILITY
+-----------------------------------------------------
+/as clearchat
+- Permission: apexstaff.clearchat
+- Action: Clears global chat for all players except staff.
+
+/as slowmode <seconds>
+- Permission: apexstaff.slowmode
+- Action: Limits how frequently players can send messages.
+
+/as togglealt <player>
+- Permission: apexstaff.alts
+- Action: Scans the database for other accounts logged
+  into the same IP address.
+
+-----------------------------------------------------
+4. THE "STAFF MODE" (Recommended Feature)
+-----------------------------------------------------
+/as mode
+- Permission: apexstaff.staffmode
+- Action: Toggles a full "Staff Environment."
+
+When ON:
+- Saves current player inventory to a local cache.
+- Clears inventory and gives "Staff Tools":
+  * Slot 1: Compass (Teleport through walls)
+  * Slot 2: Book (Notes tool)
+  * Slot 3: Ice Block (Freeze/Unfreeze player)
+  * Slot 4: Stick (Knockback/Investigation)
+  * Slot 9: Dye (Toggle Vanish)
+- Automatically enables /vanish and /fly.
+
+When OFF:
+- Restores original inventory.
+- Disables vanish/fly (unless they had them before).
+- Teleports them back to their original location.
+
+-----------------------------------------------------
+PERMISSION NODE SUMMARY:
+- apexstaff.* (All permissions)
+- apexstaff.admin (Reset/Reload plugin)
+- apexstaff.mod (Access to investigation/moderate tools)
+- apexstaff.helper (Access to staffchat/vanish/notes)
+=====================================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

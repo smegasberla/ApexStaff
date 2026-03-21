@@ -1,5 +1,5 @@
 name: ApexStaff
-version: '0.1'
+version: '0.3'
 main: me.smegasberla.apexStaff.ApexStaff
 api-version: '1.21'
 prefix: PhantomThread
@@ -20,6 +20,7 @@ permissions:
       apexstaff.admin: true
       apexstaff.reload: true
       apexstaff.vanish: true
+      apexstaff.freeze: true
 
   apexstaff.admin:
     description: Access ApexStaff main command
@@ -29,4 +30,7 @@ permissions:
     default: op
   apexstaff.vanish:
     description: Access /apexstaff vanish {player} command
+    default: op
+  apexstaff.freeze:
+    description: Access /apexstaff freeze {player} command
     default: op

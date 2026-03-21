@@ -1,9 +1,14 @@
 package me.smegasberla.apexStaff;
 
+import com.github.retrooper.packetevents.PacketEvents;
+import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
 import me.smegasberla.apexStaff.commands.ApexCommand;
+import me.smegasberla.apexStaff.listeners.*;
+import me.smegasberla.apexStaff.managers.DatabaseManager;
+import me.smegasberla.apexStaff.models.FreezeModel;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class ApexStaff extends JavaPlugin {
@@ -13,26 +18,48 @@ public final class ApexStaff extends JavaPlugin {
     @Override
     public void onLoad() {
 
+        PacketEvents.setAPI(SpigotPacketEventsBuilder.build(this));
+        PacketEvents.getAPI().getSettings()
+                .reEncodeByDefault(true)
+                .bStats(false)
+                .checkForUpdates(true);
 
+        PacketEvents.getAPI().load();
 
     }
 
     @Override
     public void onEnable() {
-        // Plugin startup logic
-        getConfig().options().copyDefaults(true);
-        saveDefaultConfig();
 
         plugin = this;
 
+        getConfig().options().copyDefaults(true);
+        saveDefaultConfig();
+
+        PacketEvents.getAPI().init();
+
         getCommand("apexstaff").setExecutor(new ApexCommand());
+
+
+        getServer().getPluginManager().registerEvents(new MovementListener(this), this);
+        getServer().getPluginManager().registerEvents(new DamageListener(this), this);
+        getServer().getPluginManager().registerEvents(new ChatListener(this), this);
+        getServer().getPluginManager().registerEvents(new QuitListener(this), this);
+        getServer().getPluginManager().registerEvents(new JoinListener(this), this);
+
+        // Initialize Database
+        DatabaseManager.init();
+        DatabaseManager.createTables();
 
 
     }
 
     @Override
     public void onDisable() {
-        // Plugin shutdown logic
+
+        DatabaseManager.closeConnection();
+        PacketEvents.getAPI().terminate();
+
     }
 
     public static void sendHelpMessage(CommandSender sender) {
@@ -43,12 +70,41 @@ public final class ApexStaff extends JavaPlugin {
         sender.sendMessage(ChatColor.AQUA + "/apexstaff" + ChatColor.GRAY + " - " + ChatColor.WHITE + "Show this help message");
         sender.sendMessage(ChatColor.AQUA + "/apexstaff reload" + ChatColor.GRAY + " - " + ChatColor.WHITE + "Reload the plugin configuration");
         sender.sendMessage(ChatColor.AQUA + "/apexstaff vanish" + ChatColor.GRAY + " - " + ChatColor.WHITE + "Toggle vanish mode");
+        sender.sendMessage(ChatColor.AQUA + "/apexstaff freeze" + ChatColor.GRAY + " - " + ChatColor.WHITE + "Freeze a player");
         sender.sendMessage("");
         sender.sendMessage(ChatColor.DARK_GRAY + "=================================");
     }
 
     public static ApexStaff getPlugin() {
         return plugin;
+    }
+
+    public void startCleanupTask() {
+
+        Bukkit.getScheduler().runTaskTimerAsynchronously(this, () -> {
+
+
+            int deleted = DatabaseManager.cleanupExpiredBans();
+
+            // 2. Clean up the Memory Cache (FreezeModel)
+            // We use a temporary list to avoid "ConcurrentModificationException"
+            java.util.List<java.util.UUID> toRemove = new java.util.ArrayList<>();
+
+
+            for (java.util.UUID uuid : FreezeModel.getAllBannedUUIDs()) {
+                FreezeModel model = FreezeModel.getBan(uuid);
+                if (model != null && model.isExpired()) {
+                    toRemove.add(uuid);
+                }
+            }
+
+            // Remove from memory
+            for (java.util.UUID uuid : toRemove) {
+                FreezeModel.removeBan(uuid);
+            }
+
+
+        }, 20L * 60, 20L * 60 * 5);
     }
 
 }

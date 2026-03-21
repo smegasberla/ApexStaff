@@ -25,4 +25,62 @@ target-unvanished: "&cYou got unvanished by {player}!"
 succesfully-vanished: "&aYou have successfully vanished {target}!"
 successfully-unvanished: "&cYou have successfully unvanished {target}!"
 
+# FREEZE MESSAGES:
+freezed-message: "&cYou got freezed by {player}!"
+unfreezed-message: "&aYou got unfreezed by {player}!"
+successfully-freezed: "&aYou have successfully freezed {target}"
+successfully-unfreezed: "&aYou have successfully unfreezed {target}"
+freeze-yourself: "&cYou can't freeze yourself!"
+open-inventories-disallowed: "&cYou cant open inventories when freezed!"
+commands-disallowed: "&cYou cant execute commands when freezed!"
+chat-disallowed: "&cYou cant write in chat when freezed!"
+movement-disallowed: "&cYou cant move when freezed!"
+
+quit-banned-permanent: |
+  &aApexStaff Moderation
+  &4&m---------------------------------------
+  &c&lSCREENSHARE EVASION
+  &7You disconnected while being frozen by staff.
+  
+  &7This is considered an &4Admission of Guilt&7.
+  &cBanned by: &f{player}
+  &cStatus: &fPermanently Banned.
+  &cReason: &f{reason}
+  &4&m---------------------------------------
+
+quit-banned-temporary: |
+  &aApexStaff Moderation
+  &4&m---------------------------------------
+  &c&lSCREENSHARE EVASION
+  &7You disconnected while being frozen by staff.
+  
+  &7This is considered an &4Admission of Guilt&7.
+  &cBanned by: &f{player}
+  &cStatus: &fTempBanned: {expiry}
+  &cReason: &f{reason}
+  &4&m---------------------------------------
+  
+
+#OPTIONS:
+freeze:
+  # Block a player to write messages in chat while freezed
+  block-chat-message: true
+  # Block a player to execute commands while freezed
+  block-command-execution: true
+  # Ban a player when he quits the server when was freezed
+  ban-on-quit:
+    enabled: true
+    reason: "Quitted while freezed"
+    temp-ban:
+      enabled: true # Overrides the permanent ban feature
+      time: "1h" #Time for the temp ban when quitting after getting freezed
+
+  # Block a player to take/deal damage while freezed
+  block-damage: true
+
+  whitelisted-commands:
+    - msg
+    - whitelist
+    #Continue writing commands here
+
 

@@ -74,7 +74,17 @@ public class MessageUtils {
 
     public static String getMessage(ApexStaff plugin, String path, String... replacements) {
         FileConfiguration config = plugin.getConfig();
-        String message = config.getString(path, path);
+
+        if (!config.contains(path)) {
+            plugin.getLogger().warning("[Config Error] Missing path: " + path);
+            return "§c(Missing Config: " + path + ")";
+        }
+
+        String message = config.getString(path);
+
+        if (message == null || message.isEmpty()) {
+            return "§c(Empty Message: " + path + ")";
+        }
 
         if (replacements.length > 0 && replacements.length % 2 == 0) {
             for (int i = 0; i < replacements.length; i += 2) {

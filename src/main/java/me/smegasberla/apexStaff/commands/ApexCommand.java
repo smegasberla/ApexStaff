@@ -46,6 +46,13 @@ public class ApexCommand implements CommandExecutor, TabCompleter {
                         sender.sendMessage(noPermission);
                     }
                     break;
+                case "freeze":
+                    if (sender.hasPermission("apexstaff.freeze")) {
+                        new FreezeCommand().onCommand(sender, command, label, subArgs);
+                    } else {
+                        sender.sendMessage(noPermission);
+                    }
+                    break;
 
                 default:
                     plugin.sendHelpMessage(sender);
@@ -62,7 +69,7 @@ public class ApexCommand implements CommandExecutor, TabCompleter {
         List<String> completions = new ArrayList<>();
 
         if (args.length == 1) {
-            List<String> subCommands = Arrays.asList("reload", "vanish");
+            List<String> subCommands = Arrays.asList("reload", "vanish", "freeze");
             String partial = args[0].toLowerCase();
 
             for (String subCmd : subCommands) {
