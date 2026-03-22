@@ -13,6 +13,7 @@ player-offline: "&c{target} is currently offline or doesen't exist!"
 wrong-arguments: "&cYou typed the wrong amount of arguments!"
 no-permission: "&cYou dont have permission to run this command!"
 only-players: "&cOnly players can run this command!"
+exempt-message: "&cThe player is exempted from checks!"
 
 # RELOAD MESSAGES:
 successfully-reloaded: "&aYou have successfully reloaded the plugin!"
@@ -59,21 +60,50 @@ quit-banned-temporary: |
   &cStatus: &fTempBanned: {expiry}
   &cReason: &f{reason}
   &4&m---------------------------------------
-  
+
+# XRAY MESSAGES
+xray-message: |
+  &aApexStaff Moderation
+  &4&m---------------------------------------
+  &fXray Check for: &e{target}
+  &bTotal Blocks: &f{total_blocks}
+  &bTotal Ores: &f{total_ores}
+  &6Percentage of Xray: &f{percentage_of_xray}%
+  &6Risk: {risk_of_xray}
+  &6Suspect status: &f{suspect_status}
+
+xray-risk-level:
+  low: "&aLOW"
+  moderate: "&eMODERATE"
+  high: "&cHIGH"
+
+xray-suspect:
+  suspect: "&cSUSPECT"
+  clear: "&aCLEAR"
+
+cleared-xray-data: "&aYou successfully cleared x-ray data for {target}"
+
+
+
 
 #OPTIONS:
 freeze:
   # Block a player to write messages in chat while freezed
   block-chat-message: true
+
   # Block a player to execute commands while freezed
   block-command-execution: true
+
   # Ban a player when he quits the server when was freezed
   ban-on-quit:
     enabled: true
     reason: "Quitted while freezed"
     temp-ban:
-      enabled: true # Overrides the permanent ban feature
-      time: "1h" #Time for the temp ban when quitting after getting freezed
+      # Overrides the permanent ban feature
+      enabled: true
+
+      #Time for the temp ban when quitting after getting freezed
+      time: "1h"
 
   # Block a player to take/deal damage while freezed
   block-damage: true
@@ -82,5 +112,56 @@ freeze:
     - msg
     - whitelist
     #Continue writing commands here
+
+xray:
+  #Set it to false if you wanna disable x-ray check. Don't auto-ban people if they get flagged as suspect, always check first.
+  enabled: true
+
+  #List of blocks that the plugin will take count of when checking for xray(The names are the material names for minecraft<)
+  xray-blocks:
+    # Diamond
+    - DIAMOND_ORE
+    - DEEPSLATE_DIAMOND_ORE
+    # Gold
+    - GOLD_ORE
+    - DEEPSLATE_GOLD_ORE
+    - NETHER_GOLD_ORE
+    # Iron
+    - IRON_ORE
+    - DEEPSLATE_IRON_ORE
+    # Emerald
+    - EMERALD_ORE
+    - DEEPSLATE_EMERALD_ORE
+    # Coal
+    - COAL_ORE
+    - DEEPSLATE_COAL_ORE
+    # Copper
+    - COPPER_ORE
+    - DEEPSLATE_COPPER_ORE
+    # Lapis Lazuli
+    - LAPIS_ORE
+    - DEEPSLATE_LAPIS_ORE
+    # Redstone
+    - REDSTONE_ORE
+    - DEEPSLATE_REDSTONE_ORE
+    # Nether Specific
+    - ANCIENT_DEBRIS
+    - NETHER_QUARTZ_ORE
+
+  #Follow using same syntax if you wanna add more blocks
+
+  #Percentage number from when a player starts to be suspect and level of risk is moderate, below this is low risk
+  alert-threshold: 40.0
+  #From here the player gets flagged  as high risk of x-ray
+  high-risk: 70.0
+  #Amount of mining blocks to break before getting flagged as suspect if the percentage is higher than alert-threshold
+  amount-of-blocks: 100
+
+  # How it works:
+  # Suspect status: {suspect_status} this line tells you if the minimum requirements were met
+  # The conditions are:
+  #  - Enough amount of blocks broken(amount-of-blocks in config.yml)
+  #  - Percentage higher than alert-threshold
+
 
 

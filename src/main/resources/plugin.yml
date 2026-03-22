@@ -2,13 +2,13 @@ name: ApexStaff
 version: '0.3'
 main: me.smegasberla.apexStaff.ApexStaff
 api-version: '1.21'
-prefix: PhantomThread
+prefix: ApexStaff
 authors: [ smegasberla ]
 description: High performance utilities and QoL features for server staff.
 commands:
   apexstaff:
     description: Main ApexStaff command
-    usage: /<command> [vanish|reload]
+    usage: /<command> [vanish|reload|xray]
     aliases: ax
     permission: apexstaff.admin
 
@@ -21,6 +21,7 @@ permissions:
       apexstaff.reload: true
       apexstaff.vanish: true
       apexstaff.freeze: true
+      apexstaff.exempt: false
 
   apexstaff.admin:
     description: Access ApexStaff main command
@@ -34,3 +35,9 @@ permissions:
   apexstaff.freeze:
     description: Access /apexstaff freeze {player} command
     default: op
+  apexstaff.exempt:
+    description: Exempts the owner from plugin cheats checks
+    default: false
+  apexstaff.xray:
+    description: Access /apexstaff xray {player} [info|clear] command
+    default: false

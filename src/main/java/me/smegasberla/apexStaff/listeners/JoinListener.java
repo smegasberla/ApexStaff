@@ -3,9 +3,11 @@ package me.smegasberla.apexStaff.listeners;
 import me.smegasberla.apexStaff.ApexStaff;
 import me.smegasberla.apexStaff.managers.DatabaseManager;
 import me.smegasberla.apexStaff.managers.FreezeManager;
+import me.smegasberla.apexStaff.managers.XRayCheckManager;
 import me.smegasberla.apexStaff.models.FreezeModel;
 import me.smegasberla.apexStaff.utils.MessageUtils;
 import me.smegasberla.apexStaff.utils.TimeUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -22,14 +24,22 @@ import static org.bukkit.event.player.AsyncPlayerPreLoginEvent.*;
 public class JoinListener implements Listener {
 
     private final ApexStaff plugin;
+    private final DatabaseManager databaseManager;
+    private final XRayCheckManager xrayManager;
 
-    public JoinListener(ApexStaff plugin) {
+    public JoinListener(ApexStaff plugin, DatabaseManager databaseManager, XRayCheckManager xrayManager) {
         this.plugin = plugin;
+        this.databaseManager = databaseManager;
+        this.xrayManager = xrayManager;
     }
 
     @EventHandler
     public void onPlayerJoin(AsyncPlayerPreLoginEvent e) {
         java.util.UUID uuid = e.getUniqueId();
+
+        Player p = Bukkit.getPlayer(uuid);
+
+        DatabaseManager.getXrayData(p, xrayManager);
 
         if (!FreezeModel.isBanned(uuid)) {
             return;

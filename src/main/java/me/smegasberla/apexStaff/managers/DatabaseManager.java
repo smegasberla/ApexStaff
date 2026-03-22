@@ -9,6 +9,7 @@ import java.io.File;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.logging.Level;
 
 public class DatabaseManager {
@@ -52,6 +53,15 @@ public class DatabaseManager {
             )
             """);
 
+            stmt.execute("""
+            CREATE TABLE IF NOT EXISTS xray_data(
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                uuid TEXT UNIQUE,
+                total_blocks INTEGER DEFAULT 0,
+                total_ores INTEGER DEFAULT 0
+            )
+            """);
+
             ApexStaff.getPlugin().getLogger().info("Database tables created successfully!");
 
         } catch (SQLException e) {
@@ -77,14 +87,7 @@ public class DatabaseManager {
         }
     }
 
-    /**
-     * Add a freeze ban for a player
-     * @param p The player to freeze ban
-     * @param reason The reason for the freeze ban
-     * @param timeIssued The timestamp when the ban was issued
-     * @param expires The timestamp when the ban expires (-1 for permanent)
-     * @param bannedBy The staff member who issued the ban
-     */
+
     public static void addFreezeBan(Player p, String reason, long timeIssued, long expires, String bannedBy) {
         String sql = "INSERT OR REPLACE INTO froze_banned (uuid, reason, time_issued, expires, banned_by) VALUES(?, ?, ?, ?, ?)";
 
@@ -105,11 +108,7 @@ public class DatabaseManager {
         }
     }
 
-    /**
-     * Check if a player is freeze banned
-     * @param playerUUID The UUID of the player to check
-     * @return true if the player is freeze banned and the ban is still active
-     */
+
     public static boolean isFrozen(String playerUUID) {
         String sql = "SELECT expires FROM froze_banned WHERE uuid = ?";
 
@@ -133,20 +132,12 @@ public class DatabaseManager {
         return false;
     }
 
-    /**
-     * Check if a player is freeze banned (using Player object)
-     * @param p The player to check
-     * @return true if the player is freeze banned and the ban is still active
-     */
+
     public static boolean isFrozen(Player p) {
         return isFrozen(p.getUniqueId().toString());
     }
 
-    /**
-     * Remove a freeze ban from a player (permanent or temporary)
-     * @param playerUUID The UUID of the player to unban
-     * @return true if the ban was successfully removed
-     */
+
     public static boolean removeFreezeBan(String playerUUID) {
         String sql = "DELETE FROM froze_banned WHERE uuid = ?";
 
@@ -165,20 +156,12 @@ public class DatabaseManager {
         return false;
     }
 
-    /**
-     * Remove a freeze ban from a player (using Player object)
-     * @param p The player to unban
-     * @return true if the ban was successfully removed
-     */
+
     public static boolean removeFreezeBan(Player p) {
         return removeFreezeBan(p.getUniqueId().toString());
     }
 
-    /**
-     * Get freeze ban information for a player
-     * @param playerUUID The UUID of the player
-     * @return FreezeModel containing the ban information, or null if not banned
-     */
+
     public static FreezeModel getFreezeBan(String playerUUID) {
         String sql = "SELECT * FROM froze_banned WHERE uuid = ?";
 
@@ -204,10 +187,7 @@ public class DatabaseManager {
         return null;
     }
 
-    /**
-     * Get all active freeze bans
-     * @return List of all active FreezeModel entries
-     */
+
     public static List<FreezeModel> getAllActiveFreezeBans() {
         List<FreezeModel> freezeBans = new ArrayList<>();
         String sql = "SELECT * FROM froze_banned";
@@ -239,10 +219,6 @@ public class DatabaseManager {
         return freezeBans;
     }
 
-    /**
-     * Clean up expired freeze bans from the database
-     * @return number of cleaned up bans
-     */
     public static int cleanupExpiredBans() {
         String sql = "DELETE FROM froze_banned WHERE expires != -1 AND expires < ?";
 
@@ -259,5 +235,65 @@ public class DatabaseManager {
         }
 
         return 0;
+    }
+
+    public static void addXrayData(Player p, int totalBlock, int totalOres) {
+
+        String sql = "INSERT INTO xray_data (uuid, total_blocks, total_ores) VALUES (?, ?, ?) " +
+                "ON CONFLICT(uuid) DO UPDATE SET " +
+                "total_blocks = excluded.total_blocks, " +
+                "total_ores = excluded.total_ores";
+
+        try(PreparedStatement ppstm = connection.prepareStatement(sql)) {
+
+            UUID uuid = p.getUniqueId();
+
+            ppstm.setString(1, uuid.toString());
+            ppstm.setInt(2, totalBlock);
+            ppstm.setInt(3, totalOres);
+            ppstm.execute();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public static void removeXrayData(Player p) {
+        // We use UPDATE to change the values to 0 for a specific UUID
+        String sql = "UPDATE xray_data SET total_blocks = 0, total_ores = 0 WHERE uuid = ?";
+
+        try (PreparedStatement ppstm = connection.prepareStatement(sql)) {
+            UUID uuid = p.getUniqueId();
+
+            ppstm.setString(1, uuid.toString());
+            ppstm.executeUpdate(); // Use executeUpdate for changes
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void getXrayData(Player p, XRayCheckManager manager) {
+        String sql = "SELECT total_blocks, total_ores FROM xray_data WHERE uuid = ?";
+
+        try (PreparedStatement ppstm = connection.prepareStatement(sql)) {
+            ppstm.setString(1, p.getUniqueId().toString());
+
+
+            try (ResultSet rs = ppstm.executeQuery()) {
+                if (rs.next()) {
+
+                    int blocks = rs.getInt("total_blocks");
+                    int ores = rs.getInt("total_ores");
+
+
+                    manager.totalBlocks.put(p.getUniqueId(), blocks);
+                    manager.totalOres.put(p.getUniqueId(), ores);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

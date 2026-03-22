@@ -4,6 +4,7 @@ import me.smegasberla.apexStaff.ApexStaff;
 import me.smegasberla.apexStaff.commands.FreezeCommand;
 import me.smegasberla.apexStaff.managers.DatabaseManager;
 import me.smegasberla.apexStaff.managers.FreezeManager;
+import me.smegasberla.apexStaff.managers.XRayCheckManager;
 import me.smegasberla.apexStaff.models.FreezeModel;
 import me.smegasberla.apexStaff.utils.MessageUtils;
 import me.smegasberla.apexStaff.utils.TimeUtils;
@@ -18,15 +19,24 @@ import java.util.UUID;
 public class QuitListener implements Listener {
 
     private final ApexStaff plugin;
+    private final DatabaseManager databaseManager;
+    private final XRayCheckManager xRayCheckManager;
 
-    public QuitListener(ApexStaff plugin) {
+    public QuitListener(ApexStaff plugin, DatabaseManager databaseManager, XRayCheckManager xRayCheckManager) {
         this.plugin = plugin;
+        this.databaseManager = databaseManager;
+        this.xRayCheckManager = xRayCheckManager;
     }
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent e) {
         Player p = e.getPlayer();
         UUID uuid = p.getUniqueId();
+
+        int totalBlocks = xRayCheckManager.totalBlocks.get(uuid);
+        int totalOres = xRayCheckManager.totalOres.get(uuid);
+
+        DatabaseManager.addXrayData(p,totalBlocks, totalOres);
 
         if (FreezeManager.isFreezed(p)) {
             if (plugin.getConfig().getBoolean("freeze.ban-on-quit.enabled")) {

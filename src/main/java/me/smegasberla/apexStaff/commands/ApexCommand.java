@@ -1,6 +1,7 @@
 package me.smegasberla.apexStaff.commands;
 
 import me.smegasberla.apexStaff.ApexStaff;
+import me.smegasberla.apexStaff.managers.XRayCheckManager;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -14,6 +15,12 @@ import java.util.Arrays;
 import java.util.List;
 
 public class ApexCommand implements CommandExecutor, TabCompleter {
+
+    private final XRayCheckManager manager;
+
+    public ApexCommand(XRayCheckManager manager) {
+        this.manager = manager;
+    }
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String @NotNull [] args) {
@@ -53,6 +60,13 @@ public class ApexCommand implements CommandExecutor, TabCompleter {
                         sender.sendMessage(noPermission);
                     }
                     break;
+                case "xray":
+                    if (sender.hasPermission("apexstaff.xray")) {
+                        new XrayCommand(plugin, manager).onCommand(sender, command, label, subArgs);
+                    } else {
+                        sender.sendMessage(noPermission);
+                    }
+                    break;
 
                 default:
                     plugin.sendHelpMessage(sender);
@@ -64,12 +78,13 @@ public class ApexCommand implements CommandExecutor, TabCompleter {
     }
 
 
+
     @Override
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, String[] args) {
         List<String> completions = new ArrayList<>();
 
         if (args.length == 1) {
-            List<String> subCommands = Arrays.asList("reload", "vanish", "freeze");
+            List<String> subCommands = Arrays.asList("reload", "vanish", "freeze", "xray");
             String partial = args[0].toLowerCase();
 
             for (String subCmd : subCommands) {

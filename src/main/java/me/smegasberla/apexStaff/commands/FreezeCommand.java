@@ -80,6 +80,16 @@ public class FreezeCommand implements CommandExecutor {
 
         }
 
+        if(target.hasPermission("apexstaff.exempt")) {
+            String exemptMessage = MessageUtils.getMessage(plugin, "exempt-message");
+
+            if(exemptMessage != null) {
+                p.sendMessage(exemptMessage);
+                return  true;
+            }
+
+        }
+
         String successfullyFreezed = MessageUtils.getMessage(plugin, "successfully-freezed", "{target}", targetName);
         String successfullyUnfreezed = MessageUtils.getMessage(plugin, "successfully-unfreezed", "{target}", targetName);
 

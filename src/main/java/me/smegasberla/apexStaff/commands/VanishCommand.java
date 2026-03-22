@@ -39,7 +39,7 @@ public class VanishCommand implements CommandExecutor {
             Player target = Bukkit.getPlayerExact(targetName);
 
             if (target == null) {
-                // Fixed: use targetName instead of target.getName() (target is null here)
+
                 String playerOffline = MessageUtils.getMessage(plugin, "player-offline", "{target}", targetName);
                 p.sendMessage(playerOffline);
                 return true;

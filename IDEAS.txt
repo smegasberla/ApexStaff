@@ -7,10 +7,6 @@ MAIN COMMAND: /apexstaff (Aliases: /as, /staff)
 -----------------------------------------------------
 1. STEALTH & INVESTIGATION
 -----------------------------------------------------
-/as vanish
-- Permission: apexstaff.vanish
-- Action: Toggles visibility. Hides join/quit messages.
-
 /as inspect <player>
 - Permission: apexstaff.inspect
 - Action: Opens a GUI showing the player's live inventory,
@@ -26,19 +22,9 @@ MAIN COMMAND: /apexstaff (Aliases: /as, /staff)
 - Action: Silently "rides" the player as a passenger to
   see exactly where they are looking.
 
-/as xraycheck
-- Permission: apexstaff.xray
-- Action: Lists players with suspicious Diamond-to-Stone
-  mining ratios.
-
 -----------------------------------------------------
 2. DISCIPLINE & CONTROL
 -----------------------------------------------------
-/as freeze <player>
-- Permission: apexstaff.freeze
-- Action: Locks player in place. Sends a warning on
-  their screen to "Join Discord/Wait for Staff."
-
 /as notes <player> [add/list/remove] [text]
 - Permission: apexstaff.notes
 - Action: Internal staff database to track suspicious

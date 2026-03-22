@@ -5,15 +5,26 @@ import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder
 import me.smegasberla.apexStaff.commands.ApexCommand;
 import me.smegasberla.apexStaff.listeners.*;
 import me.smegasberla.apexStaff.managers.DatabaseManager;
+import me.smegasberla.apexStaff.managers.XRayCheckManager;
 import me.smegasberla.apexStaff.models.FreezeModel;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.List;
+import java.util.UUID;
+
+import static me.smegasberla.apexStaff.managers.DatabaseManager.addXrayData;
 
 public final class ApexStaff extends JavaPlugin {
 
     private static ApexStaff plugin;
+    private final XRayCheckManager sharedManager = new XRayCheckManager(this);
+    private final DatabaseManager databaseManager = new DatabaseManager();
+
+
 
     @Override
     public void onLoad() {
@@ -38,14 +49,15 @@ public final class ApexStaff extends JavaPlugin {
 
         PacketEvents.getAPI().init();
 
-        getCommand("apexstaff").setExecutor(new ApexCommand());
+        getCommand("apexstaff").setExecutor(new ApexCommand(sharedManager));
 
 
         getServer().getPluginManager().registerEvents(new MovementListener(this), this);
         getServer().getPluginManager().registerEvents(new DamageListener(this), this);
         getServer().getPluginManager().registerEvents(new ChatListener(this), this);
-        getServer().getPluginManager().registerEvents(new QuitListener(this), this);
-        getServer().getPluginManager().registerEvents(new JoinListener(this), this);
+        getServer().getPluginManager().registerEvents(new QuitListener(this, databaseManager, sharedManager), this);
+        getServer().getPluginManager().registerEvents(new JoinListener(this, databaseManager, sharedManager), this);
+        getServer().getPluginManager().registerEvents(new BlockBreakListener(this, sharedManager), this);
 
         // Initialize Database
         DatabaseManager.init();
@@ -69,8 +81,9 @@ public final class ApexStaff extends JavaPlugin {
         sender.sendMessage("");
         sender.sendMessage(ChatColor.AQUA + "/apexstaff" + ChatColor.GRAY + " - " + ChatColor.WHITE + "Show this help message");
         sender.sendMessage(ChatColor.AQUA + "/apexstaff reload" + ChatColor.GRAY + " - " + ChatColor.WHITE + "Reload the plugin configuration");
-        sender.sendMessage(ChatColor.AQUA + "/apexstaff vanish" + ChatColor.GRAY + " - " + ChatColor.WHITE + "Toggle vanish mode");
-        sender.sendMessage(ChatColor.AQUA + "/apexstaff freeze" + ChatColor.GRAY + " - " + ChatColor.WHITE + "Freeze a player");
+        sender.sendMessage(ChatColor.AQUA + "/apexstaff vanish <player>" + ChatColor.GRAY + " - " + ChatColor.WHITE + "Toggle vanish mode");
+        sender.sendMessage(ChatColor.AQUA + "/apexstaff freeze <player>" + ChatColor.GRAY + " - " + ChatColor.WHITE + "Freeze a player");
+        sender.sendMessage(ChatColor.AQUA + "/apexstaff xray <player> [info|clear]" + ChatColor.GRAY + " - " + ChatColor.WHITE + "Get info on a player regarding xray checks");
         sender.sendMessage("");
         sender.sendMessage(ChatColor.DARK_GRAY + "=================================");
     }
@@ -105,6 +118,27 @@ public final class ApexStaff extends JavaPlugin {
 
 
         }, 20L * 60, 20L * 60 * 5);
+    }
+
+    public void startSaveXrayDataStats() {
+
+            Bukkit.getScheduler().runTaskTimerAsynchronously(this, () -> {
+
+                for (Player player : Bukkit.getOnlinePlayers()) {
+                    UUID uuid = player.getUniqueId();
+
+
+                    if (sharedManager.totalBlocks.containsKey(uuid)) {
+                        int blocks = sharedManager.totalBlocks.get(uuid);
+                        int ores = sharedManager.totalOres.get(uuid);
+
+
+                        addXrayData(player, blocks, ores);
+                    }
+                }
+
+            }, 20L * 60 * 5, 20L * 60 * 5);
+
     }
 
 }
