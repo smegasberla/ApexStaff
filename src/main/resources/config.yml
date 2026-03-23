@@ -83,6 +83,14 @@ xray-suspect:
 
 cleared-xray-data: "&aYou successfully cleared x-ray data for {target}"
 
+# FLY MESSAGES
+entered-fly: "&aYou have entered fly mode!"
+exited-fly: "&cYou have exited fly mode!"
+target-entered-fly: "&f{target} &ahas entered fly mode!"
+target-exited-fly: "&f{target} &chas exited fly mode!"
+target-message-entered: "&f{player} &ahas made you enter fly mode!"
+target-message-exited: "&f{player} &chas made you exit fly mode!"
+
 
 
 

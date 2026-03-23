@@ -1,6 +1,7 @@
 package me.smegasberla.apexStaff.commands;
 
 import me.smegasberla.apexStaff.ApexStaff;
+import me.smegasberla.apexStaff.managers.FlyManager;
 import me.smegasberla.apexStaff.managers.XRayCheckManager;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -17,9 +18,12 @@ import java.util.List;
 public class ApexCommand implements CommandExecutor, TabCompleter {
 
     private final XRayCheckManager manager;
+    private final FlyManager flyManager;
 
-    public ApexCommand(XRayCheckManager manager) {
+
+    public ApexCommand(XRayCheckManager manager, FlyManager flyManager) {
         this.manager = manager;
+        this.flyManager = flyManager;
     }
 
     @Override
@@ -67,6 +71,13 @@ public class ApexCommand implements CommandExecutor, TabCompleter {
                         sender.sendMessage(noPermission);
                     }
                     break;
+                case "fly":
+                    if (sender.hasPermission("apexstaff.fly")) {
+                        new FlyCommand(plugin, flyManager).onCommand(sender, command, label, subArgs);
+                    } else {
+                        sender.sendMessage(noPermission);
+                    }
+                    break;
 
                 default:
                     plugin.sendHelpMessage(sender);
@@ -84,7 +95,7 @@ public class ApexCommand implements CommandExecutor, TabCompleter {
         List<String> completions = new ArrayList<>();
 
         if (args.length == 1) {
-            List<String> subCommands = Arrays.asList("reload", "vanish", "freeze", "xray");
+            List<String> subCommands = Arrays.asList("reload", "vanish", "freeze", "xray", "fly");
             String partial = args[0].toLowerCase();
 
             for (String subCmd : subCommands) {

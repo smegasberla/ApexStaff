@@ -37,9 +37,7 @@ public class JoinListener implements Listener {
     public void onPlayerJoin(AsyncPlayerPreLoginEvent e) {
         java.util.UUID uuid = e.getUniqueId();
 
-        Player p = Bukkit.getPlayer(uuid);
-
-        DatabaseManager.getXrayData(p, xrayManager);
+        DatabaseManager.getXrayData(uuid, xrayManager);
 
         if (!FreezeModel.isBanned(uuid)) {
             return;

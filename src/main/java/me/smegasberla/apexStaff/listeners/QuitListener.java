@@ -33,8 +33,8 @@ public class QuitListener implements Listener {
         Player p = e.getPlayer();
         UUID uuid = p.getUniqueId();
 
-        int totalBlocks = xRayCheckManager.totalBlocks.get(uuid);
-        int totalOres = xRayCheckManager.totalOres.get(uuid);
+        int totalBlocks = xRayCheckManager.totalBlocks.getOrDefault(uuid, 0);
+        int totalOres = xRayCheckManager.totalOres.getOrDefault(uuid, 0);
 
         DatabaseManager.addXrayData(p,totalBlocks, totalOres);
 

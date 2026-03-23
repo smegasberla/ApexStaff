@@ -1,5 +1,5 @@
 name: ApexStaff
-version: '0.3'
+version: '0.8'
 main: me.smegasberla.apexStaff.ApexStaff
 api-version: '1.21'
 prefix: ApexStaff
@@ -22,6 +22,7 @@ permissions:
       apexstaff.vanish: true
       apexstaff.freeze: true
       apexstaff.exempt: false
+      apexstaff.fly: true
 
   apexstaff.admin:
     description: Access ApexStaff main command
@@ -40,4 +41,7 @@ permissions:
     default: false
   apexstaff.xray:
     description: Access /apexstaff xray {player} [info|clear] command
-    default: false
+    default: true
+  apexstaff.fly:
+    description: Acess /apexstaff fly {player} command
+    default: true

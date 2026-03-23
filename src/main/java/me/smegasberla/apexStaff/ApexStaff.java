@@ -5,6 +5,7 @@ import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder
 import me.smegasberla.apexStaff.commands.ApexCommand;
 import me.smegasberla.apexStaff.listeners.*;
 import me.smegasberla.apexStaff.managers.DatabaseManager;
+import me.smegasberla.apexStaff.managers.FlyManager;
 import me.smegasberla.apexStaff.managers.XRayCheckManager;
 import me.smegasberla.apexStaff.models.FreezeModel;
 import org.bukkit.Bukkit;
@@ -23,6 +24,7 @@ public final class ApexStaff extends JavaPlugin {
     private static ApexStaff plugin;
     private final XRayCheckManager sharedManager = new XRayCheckManager(this);
     private final DatabaseManager databaseManager = new DatabaseManager();
+    private final FlyManager flyManager = new FlyManager();
 
 
 
@@ -49,7 +51,7 @@ public final class ApexStaff extends JavaPlugin {
 
         PacketEvents.getAPI().init();
 
-        getCommand("apexstaff").setExecutor(new ApexCommand(sharedManager));
+        getCommand("apexstaff").setExecutor(new ApexCommand(sharedManager, flyManager));
 
 
         getServer().getPluginManager().registerEvents(new MovementListener(this), this);

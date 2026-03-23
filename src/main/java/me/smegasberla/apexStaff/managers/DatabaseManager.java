@@ -296,4 +296,27 @@ public class DatabaseManager {
             e.printStackTrace();
         }
     }
+
+    public static void getXrayData(UUID uuid, XRayCheckManager manager) {
+        String sql = "SELECT total_blocks, total_ores FROM xray_data WHERE uuid = ?";
+
+        try (PreparedStatement ppstm = connection.prepareStatement(sql)) {
+            // We use the uuid passed in the parameter instead of p.getUniqueId()
+            ppstm.setString(1, uuid.toString());
+
+            try (ResultSet rs = ppstm.executeQuery()) {
+                if (rs.next()) {
+                    int blocks = rs.getInt("total_blocks");
+                    int ores = rs.getInt("total_ores");
+
+                    // Update the manager's HashMaps using the UUID
+                    manager.totalBlocks.put(uuid, blocks);
+                    manager.totalOres.put(uuid, ores);
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("[ApexStaff] Error loading X-Ray data for UUID: " + uuid);
+            e.printStackTrace();
+        }
+    }
 }
