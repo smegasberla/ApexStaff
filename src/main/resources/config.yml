@@ -91,7 +91,10 @@ target-exited-fly: "&f{target} &chas exited fly mode!"
 target-message-entered: "&f{player} &ahas made you enter fly mode!"
 target-message-exited: "&f{player} &chas made you exit fly mode!"
 
-
+#CLEAR CHAT MESSAGES
+cleared-chat: "&aYou have cleared your chat!"
+target-cleared-chat: "&f{player} &fcleared your chat!"
+successfully-cleared-chat: "&aSuccessfully cleared chat for &f{target}"
 
 
 #OPTIONS:
