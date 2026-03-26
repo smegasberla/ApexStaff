@@ -21,7 +21,6 @@ public class DatabaseManager {
 
     public static void init() {
         try {
-            // Create database file in plugin data folder
             File dataFolder = ApexStaff.getPlugin().getDataFolder();
             if (!dataFolder.exists()) {
                 dataFolder.mkdirs();
@@ -132,8 +131,6 @@ public class DatabaseManager {
                     long expires = rs.getLong("expires");
                     long currentTime = System.currentTimeMillis();
 
-                    // If expires is -1, it's a permanent ban
-                    // If expires is greater than current time, the ban is still active
                     return expires == -1 || expires > currentTime;
                 }
             }
@@ -212,7 +209,6 @@ public class DatabaseManager {
             while (rs.next()) {
                 long expires = rs.getLong("expires");
 
-                // Only add active bans (permanent or not expired)
                 if (expires == -1 || expires > currentTime) {
                     freezeBans.add(new FreezeModel(
                             rs.getInt("id"),
@@ -272,14 +268,13 @@ public class DatabaseManager {
     }
 
     public static void removeXrayData(Player p) {
-        // We use UPDATE to change the values to 0 for a specific UUID
         String sql = "UPDATE xray_data SET total_blocks = 0, total_ores = 0 WHERE uuid = ?";
 
         try (PreparedStatement ppstm = connection.prepareStatement(sql)) {
             UUID uuid = p.getUniqueId();
 
             ppstm.setString(1, uuid.toString());
-            ppstm.executeUpdate(); // Use executeUpdate for changes
+            ppstm.executeUpdate();
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -385,7 +380,6 @@ public class DatabaseManager {
     }
 
     public List<String> getAlts(UUID targetUuid) {
-        // Keeping your exact original SQL
         String sql = "SELECT uuid FROM dupeip_data WHERE ip = (SELECT ip FROM dupeip_data WHERE uuid = ?) AND uuid != ?;";
 
         List<String> altNames = new ArrayList<>();

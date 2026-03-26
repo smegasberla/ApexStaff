@@ -1,7 +1,6 @@
 package me.smegasberla.apexStaff.commands;
 
 import me.smegasberla.apexStaff.ApexStaff;
-import me.smegasberla.apexStaff.ClearChatCommand;
 import me.smegasberla.apexStaff.managers.DatabaseManager;
 import me.smegasberla.apexStaff.managers.FlyManager;
 import me.smegasberla.apexStaff.managers.XRayCheckManager;
@@ -10,7 +9,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -23,15 +21,11 @@ public class ApexCommand implements CommandExecutor, TabCompleter {
     private final FlyManager flyManager;
     private final DatabaseManager databaseManager;
 
-    
-
     public ApexCommand(XRayCheckManager manager, FlyManager flyManager, DatabaseManager databaseManager) {
         this.manager = manager;
         this.flyManager = flyManager;
         this.databaseManager = databaseManager;
     }
-
-    
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String @NotNull [] args) {
@@ -101,7 +95,6 @@ public class ApexCommand implements CommandExecutor, TabCompleter {
                         sender.sendMessage(noPermission);
                     }
                     break;
-                
 
                 default:
                     plugin.sendHelpMessage(sender);

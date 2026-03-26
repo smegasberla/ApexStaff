@@ -1,5 +1,6 @@
-package me.smegasberla.apexStaff;
+package me.smegasberla.apexStaff.commands;
 
+import me.smegasberla.apexStaff.ApexStaff;
 import me.smegasberla.apexStaff.utils.MessageUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -55,12 +56,6 @@ public class ClearChatCommand implements CommandExecutor {
 
 
             }
-            //Here send eventual messages from config.yml
-            if(clearedChat != null) {
-
-                p.sendMessage(clearedChat);
-
-            }
 
             return true;
 
@@ -85,7 +80,6 @@ public class ClearChatCommand implements CommandExecutor {
                 target.sendMessage(" ");
 
             }
-            //Here send eventual messages from config.yml
             if(targetClearedChat != null) {
 
                 target.sendMessage(targetClearedChat);

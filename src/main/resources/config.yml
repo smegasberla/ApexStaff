@@ -6,7 +6,7 @@
 #    ███  ███ ████▀ ▀█▄▄▄ ██ ██ ███████▀  ██  ▀█▄██  ██   ██
 #             ██
 #             ▀▀
-
+ 
 
 # GENERAL MESSAGES:
 player-offline: "&c{target} is currently offline or doesen't exist!"
@@ -97,7 +97,6 @@ target-cleared-chat: "&f{player} &fcleared your chat!"
 successfully-cleared-chat: "&aSuccessfully cleared chat for &f{target}"
 
 #DUPEIP MESSAGES
-
 
 dupeip-message: |
     &8&m----------------------------------------
@@ -194,6 +193,3 @@ xray:
   # The conditions are:
   #  - Enough amount of blocks broken(amount-of-blocks in config.yml)
   #  - Percentage higher than alert-threshold
-
-
-

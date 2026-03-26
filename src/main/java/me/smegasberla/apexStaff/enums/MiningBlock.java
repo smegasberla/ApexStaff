@@ -5,7 +5,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 public enum MiningBlock {
-    // Standard Overworld
     STONE(Material.STONE),
     GRANITE(Material.GRANITE),
     DIORITE(Material.DIORITE),
@@ -15,11 +14,9 @@ public enum MiningBlock {
     GRAVEL(Material.GRAVEL),
     SAND(Material.SAND),
 
-    // Deepslate
     DEEPSLATE(Material.DEEPSLATE),
     COBBLED_DEEPSLATE(Material.COBBLED_DEEPSLATE),
 
-    // Nether
     NETHERRACK(Material.NETHERRACK),
     BLACKSTONE(Material.BLACKSTONE),
     BASALT(Material.BASALT),

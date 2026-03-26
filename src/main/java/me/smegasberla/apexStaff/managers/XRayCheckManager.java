@@ -58,7 +58,6 @@ public class XRayCheckManager {
         double percentage = calcutaleXRayPercentage(p);
         double threshold = plugin.getConfig().getDouble("xray.alert-threshold");
 
-        // NOW: They are only "Suspect" if they have enough blocks AND a high percentage
         return totalMined >= minBlocks && percentage >= threshold;
     }
 }

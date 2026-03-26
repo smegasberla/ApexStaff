@@ -64,7 +64,6 @@ public final class ApexStaff extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new JoinListener(this, dupeIPManager, databaseManager), this);
 
 
-        // Initialize Database
         DatabaseManager.init();
         DatabaseManager.createTables();
 
@@ -104,8 +103,6 @@ public final class ApexStaff extends JavaPlugin {
 
             int deleted = DatabaseManager.cleanupExpiredBans();
 
-            // 2. Clean up the Memory Cache (FreezeModel)
-            // We use a temporary list to avoid "ConcurrentModificationException"
             java.util.List<java.util.UUID> toRemove = new java.util.ArrayList<>();
 
 
@@ -116,7 +113,6 @@ public final class ApexStaff extends JavaPlugin {
                 }
             }
 
-            // Remove from memory
             for (java.util.UUID uuid : toRemove) {
                 FreezeModel.removeBan(uuid);
             }

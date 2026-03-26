@@ -52,19 +52,10 @@ public class FreezeModel {
         return System.currentTimeMillis() > expires;
     }
 
-    /**
-     * Gets the Bukkit OfflinePlayer object for this ban entry.
-     * Useful for getting the name of a player even if they are offline.
-     * @return The OfflinePlayer
-     */
     public org.bukkit.OfflinePlayer getOfflinePlayer() {
         return org.bukkit.Bukkit.getOfflinePlayer(UUID.fromString(playerUUID));
     }
 
-    /**
-     * Gets the online Player object if the player is currently connected.
-     * @return The Player object, or null if they are offline.
-     */
     public org.bukkit.entity.Player getOnlinePlayer() {
         return org.bukkit.Bukkit.getPlayer(UUID.fromString(playerUUID));
     }
@@ -73,18 +64,10 @@ public class FreezeModel {
         return activeBans.keySet();
     }
 
-    /**
-     * Removes a specific player from the ban cache.
-     * @param uuid The UUID of the player to unban.
-     */
     public static void removeBan(UUID uuid) {
         activeBans.remove(uuid);
     }
 
-    /**
-     * Clears all bans from the memory cache.
-     * Useful for plugin reloads or global unbans.
-     */
     public static void clearBans() {
         activeBans.clear();
     }
