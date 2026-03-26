@@ -2,6 +2,8 @@ package me.smegasberla.apexStaff.managers;
 
 import me.smegasberla.apexStaff.ApexStaff;
 import me.smegasberla.apexStaff.models.FreezeModel;
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.sqlite.SQLiteDataSource;
 
@@ -60,6 +62,16 @@ public class DatabaseManager {
                 total_blocks INTEGER DEFAULT 0,
                 total_ores INTEGER DEFAULT 0
             )
+            """);
+
+            stmt.execute("""
+            CREATE TABLE IF NOT EXISTS dupeip_data (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                uuid TEXT UNIQUE,
+                ip TEXT,
+                last_seen BIGINT DEFAULT (CAST((julianday('now') - 2440587.5) * 86400000 AS BIGINT))
+            );
+            CREATE INDEX IF NOT EXISTS idx_ip ON dupeip_data(ip);
             """);
 
             ApexStaff.getPlugin().getLogger().info("Database tables created successfully!");
@@ -301,7 +313,7 @@ public class DatabaseManager {
         String sql = "SELECT total_blocks, total_ores FROM xray_data WHERE uuid = ?";
 
         try (PreparedStatement ppstm = connection.prepareStatement(sql)) {
-            // We use the uuid passed in the parameter instead of p.getUniqueId()
+
             ppstm.setString(1, uuid.toString());
 
             try (ResultSet rs = ppstm.executeQuery()) {
@@ -309,7 +321,7 @@ public class DatabaseManager {
                     int blocks = rs.getInt("total_blocks");
                     int ores = rs.getInt("total_ores");
 
-                    // Update the manager's HashMaps using the UUID
+                    
                     manager.totalBlocks.put(uuid, blocks);
                     manager.totalOres.put(uuid, ores);
                 }
@@ -319,4 +331,161 @@ public class DatabaseManager {
             e.printStackTrace();
         }
     }
+
+    public void upsertPlayer(UUID uuid, String ip) {
+
+        String sql = "INSERT INTO dupeip_data (uuid, ip, last_seen) VALUES (?, ?, ?) " +
+                "ON CONFLICT(uuid) DO UPDATE SET ip = excluded.ip, last_seen = excluded.last_seen;";
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, uuid.toString());
+            stmt.setString(2, ip);
+            stmt.setLong(3, System.currentTimeMillis());
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public List<UUID> getPlayersByIP(String ip) {
+        List<UUID> players = new ArrayList<>();
+        String sql = "SELECT uuid FROM dupeip_data WHERE ip = ?;";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, ip);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                players.add(UUID.fromString(rs.getString("uuid")));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return players;
+    }
+
+    public void removePlayer(UUID uuid) {
+        String sql = "DELETE FROM dupeip_data WHERE uuid = ?;";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, uuid.toString());
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void purgeOldData(long days) {
+        long cutoff = System.currentTimeMillis() - (days * 24 * 60 * 60 * 1000L);
+        String sql = "DELETE FROM dupeip_data WHERE last_seen < ?;";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setLong(1, cutoff);
+            int deleted = stmt.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public List<String> getAlts(UUID targetUuid) {
+        // Keeping your exact original SQL
+        String sql = "SELECT uuid FROM dupeip_data WHERE ip = (SELECT ip FROM dupeip_data WHERE uuid = ?) AND uuid != ?;";
+
+        List<String> altNames = new ArrayList<>();
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, targetUuid.toString());
+            stmt.setString(2, targetUuid.toString());
+
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                String uuidStr = rs.getString("uuid");
+                UUID altUuid = UUID.fromString(uuidStr);
+
+
+                Player onlinePlayer = Bukkit.getPlayer(altUuid);
+
+                if (onlinePlayer != null) {
+                    altNames.add(onlinePlayer.getName());
+                } else {
+
+                    OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(altUuid);
+                    String name = offlinePlayer.getName();
+
+                    if (name != null) {
+                        altNames.add(name);
+                    } else {
+
+                        altNames.add("Unknown (" + uuidStr + ")");
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return altNames;
+    }
+
+    public void updateLastSeen(UUID uuid, long lastSeen) {
+        String sql = "INSERT INTO dupeip_data (uuid, last_seen) VALUES (?, ?) " +
+                "ON CONFLICT(uuid) DO UPDATE SET last_seen = excluded.last_seen;";
+
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)){
+
+            pstmt.setString(1, uuid.toString());
+            pstmt.setLong(2, lastSeen);
+            pstmt.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public int getAltCount(UUID targetUUID) {
+
+        String sql = "SELECT COUNT(*) FROM dupeip_data WHERE ip = " +
+                "(SELECT ip FROM dupeip_data WHERE uuid = ?)";
+
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+
+            pstmt.setString(1, targetUUID.toString());
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                int totalOnIP = rs.getInt(1);
+
+                return Math.max(0, totalOnIP - 1);
+            }
+        } catch (SQLException e) {
+            System.out.println("Error calculating alts: " + e.getMessage());
+        }
+        return 0;
+    }
+
+    public long getLastSeen(UUID uuid) {
+
+        String sql = "SELECT last_seen FROM dupeip_data WHERE uuid = ?;";
+
+        try (PreparedStatement ppstm = connection.prepareStatement(sql)) {
+            ppstm.setString(1, uuid.toString());
+
+
+            try (ResultSet rs = ppstm.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getLong("last_seen");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return 0L;
+    }
+
+    public long getLastSeenByName(String name) {
+        org.bukkit.OfflinePlayer op = org.bukkit.Bukkit.getOfflinePlayer(name);
+        return getLastSeen(op.getUniqueId());
+    }
+
+
+
+
+
 }

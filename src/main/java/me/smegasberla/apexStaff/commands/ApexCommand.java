@@ -2,6 +2,7 @@ package me.smegasberla.apexStaff.commands;
 
 import me.smegasberla.apexStaff.ApexStaff;
 import me.smegasberla.apexStaff.ClearChatCommand;
+import me.smegasberla.apexStaff.managers.DatabaseManager;
 import me.smegasberla.apexStaff.managers.FlyManager;
 import me.smegasberla.apexStaff.managers.XRayCheckManager;
 import org.bukkit.ChatColor;
@@ -20,12 +21,14 @@ public class ApexCommand implements CommandExecutor, TabCompleter {
 
     private final XRayCheckManager manager;
     private final FlyManager flyManager;
+    private final DatabaseManager databaseManager;
 
     
 
-    public ApexCommand(XRayCheckManager manager, FlyManager flyManager) {
+    public ApexCommand(XRayCheckManager manager, FlyManager flyManager, DatabaseManager databaseManager) {
         this.manager = manager;
         this.flyManager = flyManager;
+        this.databaseManager = databaseManager;
     }
 
     
@@ -87,6 +90,13 @@ public class ApexCommand implements CommandExecutor, TabCompleter {
                 case "clearchat":
                     if (sender.hasPermission("apexstaff.clearchat")) {
                         new ClearChatCommand(plugin).onCommand(sender, command, label, subArgs);
+                    } else {
+                        sender.sendMessage(noPermission);
+                    }
+                    break;
+                case "dupeip":
+                    if (sender.hasPermission("apexstaff.dupeip")) {
+                        new DupeIPCommand(plugin, databaseManager).onCommand(sender, command, label, subArgs);
                     } else {
                         sender.sendMessage(noPermission);
                     }

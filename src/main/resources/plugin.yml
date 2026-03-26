@@ -1,5 +1,5 @@
 name: ApexStaff
-version: '0.9'
+version: '1.0'
 main: me.smegasberla.apexStaff.ApexStaff
 api-version: '1.21'
 prefix: ApexStaff
@@ -25,6 +25,7 @@ permissions:
       apexstaff.fly: true
       apexstaff.xray: true
       apexstaff.clearchat: true
+      apexstaff.dupeip: true
 
   apexstaff.admin:
     description: Access ApexStaff main command
@@ -45,8 +46,11 @@ permissions:
     description: Access /apexstaff xray {player} [info|clear] command
     default: op
   apexstaff.fly:
-    description: Acess /apexstaff fly {player} command
+    description: Access /apexstaff fly {player} command
     default: op
   apexstaff.clearchat:
-    description: Acess /apexstaff clearchat {player} command
+    description: Access /apexstaff clearchat {player} command
+    default: op
+  apexstaff.dupeip:
+    description: Access /apexstaff dupeip {player} command
     default: op

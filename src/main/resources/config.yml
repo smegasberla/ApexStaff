@@ -96,6 +96,27 @@ cleared-chat: "&aYou have cleared your chat!"
 target-cleared-chat: "&f{player} &fcleared your chat!"
 successfully-cleared-chat: "&aSuccessfully cleared chat for &f{target}"
 
+#DUPEIP MESSAGES
+
+
+dupeip-message: |
+    &8&m----------------------------------------
+    &6&lDUPE-IP &7| &fResults for: &e{player}
+    &7IP: &f{ip} &7| &b{count} accounts found
+    &8&m----------------------------------------
+    {alt_list}
+    &8&m----------------------------------------
+
+target-dupeip-message: |
+  &8&m----------------------------------------
+  &6&lDUPE-IP &7| &fResults for: &e{target}
+  &7IP: &f{ip} &7| &b{count} accounts found
+  &8&m----------------------------------------
+  {alt_list}
+  &8&m----------------------------------------
+
+alt-online: "&a● &f{alt} &7| &a&lONLINE"
+alt-offline: "&c○ &7{alt} &7| &fLast seen: {last_seen}"
 
 #OPTIONS:
 freeze:

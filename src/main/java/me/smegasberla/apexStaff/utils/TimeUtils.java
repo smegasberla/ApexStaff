@@ -58,13 +58,17 @@ public class TimeUtils {
 
     /**
      * Calculates the remaining time from a future timestamp and formats it.
-     * Use this in JoinListener for the kick message!
-     * * @param expiryTimestampMillis The timestamp when the ban ends
-     * @return Formatted remaining time (e.g. "1h 30m")
+     * Use this in AsyncPreLoginListener for the kick message!
+     * @param expiryTimestampMillis The timestamp when the ban ends
+     * @return Formatted remaining time (e.g. "1h 30m" or "Permanent")
      */
     public static String getRemainingTimeFormatted(long expiryTimestampMillis) {
+        // FIX: Handle permanent bans correctly so it doesn't say "0s"
+        if (expiryTimestampMillis <= 0) return "Permanent";
+
         long remainingMillis = expiryTimestampMillis - System.currentTimeMillis();
-        if (remainingMillis <= 0) return "0s";
+        if (remainingMillis <= 0) return "Expired"; // Changed to Expired to avoid confusion with 0s
+
         return formatDurationMillis(remainingMillis);
     }
 
@@ -89,29 +93,38 @@ public class TimeUtils {
             } else if (Character.isLetter(c)) {
                 if (number.length() == 0) continue;
 
-                long value = Long.parseLong(number.toString());
-                number.setLength(0); // Reset for the next number
+                try {
+                    // FIX: Catch huge numbers to prevent NumberFormatException crashes
+                    long value = Long.parseLong(number.toString());
+                    number.setLength(0); // Reset for the next number
 
-                if (c == 'y') totalSeconds += value * YEAR;
-                else if (c == 'w') totalSeconds += value * WEEK;
-                else if (c == 'd') totalSeconds += value * DAY;
-                else if (c == 'h') totalSeconds += value * HOUR;
-                else if (c == 'm') {
-                    // Check if it's "mo" for months
-                    if (i + 1 < timeString.length() && timeString.charAt(i + 1) == 'o') {
-                        totalSeconds += value * MONTH;
-                        i++; // Skip the 'o'
-                    } else {
-                        totalSeconds += value * MINUTE; // Just 'm' for minutes
+                    if (c == 'y') totalSeconds += value * YEAR;
+                    else if (c == 'w') totalSeconds += value * WEEK;
+                    else if (c == 'd') totalSeconds += value * DAY;
+                    else if (c == 'h') totalSeconds += value * HOUR;
+                    else if (c == 'm') {
+                        // Check if it's "mo" for months
+                        if (i + 1 < timeString.length() && timeString.charAt(i + 1) == 'o') {
+                            totalSeconds += value * MONTH;
+                            i++; // Skip the 'o'
+                        } else {
+                            totalSeconds += value * MINUTE; // Just 'm' for minutes
+                        }
                     }
+                    else if (c == 's') totalSeconds += value;
+                } catch (NumberFormatException e) {
+                    return -1; // Number was too long, mark as invalid
                 }
-                else if (c == 's') totalSeconds += value;
             }
         }
 
         // If a raw number was passed without a letter (e.g. "3600"), treat it as seconds
         if (number.length() > 0) {
-            totalSeconds += Long.parseLong(number.toString());
+            try {
+                totalSeconds += Long.parseLong(number.toString());
+            } catch (NumberFormatException e) {
+                return -1;
+            }
         }
 
         return totalSeconds > 0 ? totalSeconds : -1;
@@ -129,15 +142,20 @@ public class TimeUtils {
      * Calculates the expiry timestamp from a duration string
      */
     public static long calculateExpiry(String durationString) {
-        if (durationString == null || durationString.isEmpty() ||
-                durationString.equalsIgnoreCase("permanent") ||
+        if (durationString == null || durationString.trim().isEmpty()) return 0; // 0 = Invalid Format
+
+        durationString = durationString.trim();
+        if (durationString.equalsIgnoreCase("permanent") ||
                 durationString.equalsIgnoreCase("perm") ||
                 durationString.equals("-1")) {
-            return -1;
+            return -1; // -1 = Permanent
         }
 
         long seconds = parseTimeString(durationString);
-        if (seconds <= 0) return -1;
+
+        // FIX: If parseTimeString fails (-1), return 0 (Invalid), NOT -1 (Permanent)
+        // This prevents staff typos from causing accidental perm bans!
+        if (seconds <= 0) return 0;
 
         return System.currentTimeMillis() + (seconds * 1000);
     }
@@ -148,6 +166,7 @@ public class TimeUtils {
     public static String formatTimestamp(long timestamp) {
         if (timestamp <= 0) return "Permanent";
 
+        // Creating the SimpleDateFormat inside the method ensures it is thread-safe!
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         return sdf.format(new Date(timestamp));
     }

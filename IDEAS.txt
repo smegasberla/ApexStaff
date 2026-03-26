@@ -38,10 +38,6 @@ MAIN COMMAND: /apexstaff (Aliases: /as, /staff)
 -----------------------------------------------------
 3. CHAT & SERVER UTILITY
 -----------------------------------------------------
-/as clearchat
-- Permission: apexstaff.clearchat
-- Action: Clears global chat for all players except staff.
-
 /as slowmode <seconds>
 - Permission: apexstaff.slowmode
 - Action: Limits how frequently players can send messages.

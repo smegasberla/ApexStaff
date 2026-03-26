@@ -5,6 +5,7 @@ import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder
 import me.smegasberla.apexStaff.commands.ApexCommand;
 import me.smegasberla.apexStaff.listeners.*;
 import me.smegasberla.apexStaff.managers.DatabaseManager;
+import me.smegasberla.apexStaff.managers.DupeIPManager;
 import me.smegasberla.apexStaff.managers.FlyManager;
 import me.smegasberla.apexStaff.managers.XRayCheckManager;
 import me.smegasberla.apexStaff.models.FreezeModel;
@@ -14,7 +15,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.List;
 import java.util.UUID;
 
 import static me.smegasberla.apexStaff.managers.DatabaseManager.addXrayData;
@@ -25,6 +25,7 @@ public final class ApexStaff extends JavaPlugin {
     private final XRayCheckManager sharedManager = new XRayCheckManager(this);
     private final DatabaseManager databaseManager = new DatabaseManager();
     private final FlyManager flyManager = new FlyManager();
+    private final DupeIPManager dupeIPManager = new DupeIPManager();
 
 
 
@@ -51,15 +52,17 @@ public final class ApexStaff extends JavaPlugin {
 
         PacketEvents.getAPI().init();
 
-        getCommand("apexstaff").setExecutor(new ApexCommand(sharedManager, flyManager));
+        getCommand("apexstaff").setExecutor(new ApexCommand(sharedManager, flyManager, databaseManager));
 
 
         getServer().getPluginManager().registerEvents(new MovementListener(this), this);
         getServer().getPluginManager().registerEvents(new DamageListener(this), this);
         getServer().getPluginManager().registerEvents(new ChatListener(this), this);
-        getServer().getPluginManager().registerEvents(new QuitListener(this, databaseManager, sharedManager), this);
-        getServer().getPluginManager().registerEvents(new JoinListener(this, databaseManager, sharedManager), this);
+        getServer().getPluginManager().registerEvents(new QuitListener(this, databaseManager, sharedManager, dupeIPManager), this);
+        getServer().getPluginManager().registerEvents(new AsyncPreLoginListener(this, databaseManager, sharedManager), this);
         getServer().getPluginManager().registerEvents(new BlockBreakListener(this, sharedManager), this);
+        getServer().getPluginManager().registerEvents(new JoinListener(this, dupeIPManager, databaseManager), this);
+
 
         // Initialize Database
         DatabaseManager.init();

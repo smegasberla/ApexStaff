@@ -3,6 +3,7 @@ package me.smegasberla.apexStaff.listeners;
 import me.smegasberla.apexStaff.ApexStaff;
 import me.smegasberla.apexStaff.commands.FreezeCommand;
 import me.smegasberla.apexStaff.managers.DatabaseManager;
+import me.smegasberla.apexStaff.managers.DupeIPManager;
 import me.smegasberla.apexStaff.managers.FreezeManager;
 import me.smegasberla.apexStaff.managers.XRayCheckManager;
 import me.smegasberla.apexStaff.models.FreezeModel;
@@ -21,17 +22,26 @@ public class QuitListener implements Listener {
     private final ApexStaff plugin;
     private final DatabaseManager databaseManager;
     private final XRayCheckManager xRayCheckManager;
+    private final DupeIPManager dupeIPManager;
 
-    public QuitListener(ApexStaff plugin, DatabaseManager databaseManager, XRayCheckManager xRayCheckManager) {
+    public QuitListener(ApexStaff plugin, DatabaseManager databaseManager, XRayCheckManager xRayCheckManager, DupeIPManager dupeIPManager) {
         this.plugin = plugin;
         this.databaseManager = databaseManager;
         this.xRayCheckManager = xRayCheckManager;
+        this.dupeIPManager = dupeIPManager;
     }
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent e) {
         Player p = e.getPlayer();
         UUID uuid = p.getUniqueId();
+
+        long now = System.currentTimeMillis();
+
+        dupeIPManager.lastSeen.put(uuid, now);
+        dupeIPManager.playerIP.remove(uuid);
+
+        databaseManager.updateLastSeen(uuid, now);
 
         int totalBlocks = xRayCheckManager.totalBlocks.getOrDefault(uuid, 0);
         int totalOres = xRayCheckManager.totalOres.getOrDefault(uuid, 0);
@@ -43,7 +53,6 @@ public class QuitListener implements Listener {
 
                 String reason = MessageUtils.getMessage(plugin, "freeze.ban-on-quit.reason");
                 String bannedBy = (FreezeCommand.commandExecutor != null) ? FreezeCommand.commandExecutor : "Console";
-                long now = System.currentTimeMillis();
 
                 long expiry = 0;
                 if (plugin.getConfig().getBoolean("freeze.ban-on-quit.temp-ban.enabled")) {
