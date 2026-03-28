@@ -1,5 +1,5 @@
 name: ApexStaff
-version: '1.0'
+version: '1.1'
 main: me.smegasberla.apexStaff.ApexStaff
 api-version: '1.21'
 prefix: ApexStaff
@@ -26,6 +26,7 @@ permissions:
       apexstaff.xray: true
       apexstaff.clearchat: true
       apexstaff.dupeip: true
+      apexstaff.ping: true
 
   apexstaff.admin:
     description: Access ApexStaff main command
@@ -53,4 +54,7 @@ permissions:
     default: op
   apexstaff.dupeip:
     description: Access /apexstaff dupeip {player} command
+    default: op
+  apexstaff.ping:
+    description: Access /apexstaff ping {player} command
     default: op

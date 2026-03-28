@@ -95,6 +95,13 @@ public class ApexCommand implements CommandExecutor, TabCompleter {
                         sender.sendMessage(noPermission);
                     }
                     break;
+                case "ping":
+                    if (sender.hasPermission("apexstaff.ping")) {
+                        new PingCommand(plugin).onCommand(sender, command, label, subArgs);
+                    } else {
+                        sender.sendMessage(noPermission);
+                    }
+                    break;
 
                 default:
                     plugin.sendHelpMessage(sender);
@@ -112,7 +119,16 @@ public class ApexCommand implements CommandExecutor, TabCompleter {
         List<String> completions = new ArrayList<>();
 
         if (args.length == 1) {
-            List<String> subCommands = Arrays.asList("reload", "vanish", "freeze", "xray", "fly", "clearchat");
+            List<String> subCommands = Arrays.asList(
+                    "reload",
+                    "vanish",
+                    "freeze",
+                    "xray",
+                    "fly",
+                    "clearchat",
+                    "dupeip",
+                    "ping"
+            );
             String partial = args[0].toLowerCase();
 
             for (String subCmd : subCommands) {

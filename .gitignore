@@ -43,3 +43,12 @@ nms/
 craftbukkit/
 spigot/
 paper/
+
+# Documentation
+description.md
+documentation.md
+description.txt
+documentation.txt
+
+# Ideas
+IDEAS.txt

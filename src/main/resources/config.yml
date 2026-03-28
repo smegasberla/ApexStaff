@@ -117,6 +117,10 @@ target-dupeip-message: |
 alt-online: "&a● &f{alt} &7| &a&lONLINE"
 alt-offline: "&c○ &7{alt} &7| &fLast seen: {last_seen}"
 
+# PING MESSAGES
+ping-message: "&aThe ping for &f{player}&a is: &f{ping}&a ms"
+target-ping-message: "&aThe ping for &f{target}&a is: &f{ping}&a ms"
+
 #OPTIONS:
 freeze:
   # Block a player to write messages in chat while freezed

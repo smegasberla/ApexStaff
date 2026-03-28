@@ -30,9 +30,14 @@ public class DupeIPCommand implements CommandExecutor {
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String @NotNull [] args) {
 
         String wrongArgs = MessageUtils.getMessage(plugin, "wrong-arguments");
+        String onlyPlayers = MessageUtils.getMessage(plugin, "only-players");
 
         if (!(sender instanceof Player)) {
-            return true;
+            if(onlyPlayers != null) {
+
+                sender.sendMessage(onlyPlayers);
+
+            }
         }
 
         Player p = (Player) sender;
