@@ -121,6 +121,11 @@ alt-offline: "&c○ &7{alt} &7| &fLast seen: {last_seen}"
 ping-message: "&aThe ping for &f{player}&a is: &f{ping}&a ms"
 target-ping-message: "&aThe ping for &f{target}&a is: &f{ping}&a ms"
 
+#SHADOW CAM MESSAGES
+shadow-cam-yourself: "&cYou can't shadow cam yourself! "
+started-shadow-cam: "&aYou have started shadow cam on {target}!"
+stopped-shadow-cam: "&cYou have stopped shadow cam on {target}!"
+
 #OPTIONS:
 freeze:
   # Block a player to write messages in chat while freezed

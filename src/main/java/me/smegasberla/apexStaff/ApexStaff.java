@@ -1,13 +1,12 @@
 package me.smegasberla.apexStaff;
 
 import com.github.retrooper.packetevents.PacketEvents;
+import com.github.retrooper.packetevents.event.PacketListenerPriority;
 import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
 import me.smegasberla.apexStaff.commands.ApexCommand;
 import me.smegasberla.apexStaff.listeners.*;
-import me.smegasberla.apexStaff.managers.DatabaseManager;
-import me.smegasberla.apexStaff.managers.DupeIPManager;
-import me.smegasberla.apexStaff.managers.FlyManager;
-import me.smegasberla.apexStaff.managers.XRayCheckManager;
+import me.smegasberla.apexStaff.listeners.packet.ShadowCamListener;
+import me.smegasberla.apexStaff.managers.*;
 import me.smegasberla.apexStaff.models.FreezeModel;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -26,6 +25,7 @@ public final class ApexStaff extends JavaPlugin {
     private final DatabaseManager databaseManager = new DatabaseManager();
     private final FlyManager flyManager = new FlyManager();
     private final DupeIPManager dupeIPManager = new DupeIPManager();
+    private final ShadowCamManager shadowCamManager = new ShadowCamManager();
 
 
 
@@ -52,7 +52,7 @@ public final class ApexStaff extends JavaPlugin {
 
         PacketEvents.getAPI().init();
 
-        getCommand("apexstaff").setExecutor(new ApexCommand(sharedManager, flyManager, databaseManager));
+        getCommand("apexstaff").setExecutor(new ApexCommand(sharedManager, flyManager, databaseManager, shadowCamManager));
 
 
         getServer().getPluginManager().registerEvents(new MovementListener(this), this);
@@ -63,6 +63,7 @@ public final class ApexStaff extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new BlockBreakListener(this, sharedManager), this);
         getServer().getPluginManager().registerEvents(new JoinListener(this, dupeIPManager, databaseManager), this);
 
+        PacketEvents.getAPI().getEventManager().registerListener(new ShadowCamListener(this, shadowCamManager), PacketListenerPriority.NORMAL);
 
         DatabaseManager.init();
         DatabaseManager.createTables();

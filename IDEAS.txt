@@ -61,17 +61,6 @@ Difficulty legend:  [EASY]  [MEDIUM]  [HARD]
 
 ------------------------------------------------------
 
-[EASY] /ax ping <player>
-  Permission: apexstaff.ping
-  Shows the target player's current ping in milliseconds.
-  Useful to determine if a player's suspicious behavior
-  is lag-related rather than intentional cheating.
-  Implementation: player.getPing() on Paper, or read
-  from the CraftPlayer handle on Spigot. Format with
-  color coding (green <80ms, yellow <150ms, red 150ms+).
-
-------------------------------------------------------
-
 [MEDIUM] /ax watchlist <player> <add|remove|list>
   Permission: apexstaff.watchlist
   Marks a player as "under observation." Staff online
@@ -81,7 +70,7 @@ Difficulty legend:  [EASY]  [MEDIUM]  [HARD]
   Implementation: Persist the watchlist to a YAML file.
   On PlayerJoinEvent, check if the UUID is in the list
   and broadcast an action bar message to all staff via
-  Audience (Adventure API). Hook into
+  Audience (Adventure API). Hook into<
   PlayerCommandPreprocessEvent to flag command usage.
 
 ------------------------------------------------------

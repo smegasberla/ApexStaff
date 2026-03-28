@@ -3,6 +3,7 @@ package me.smegasberla.apexStaff.commands;
 import me.smegasberla.apexStaff.ApexStaff;
 import me.smegasberla.apexStaff.managers.DatabaseManager;
 import me.smegasberla.apexStaff.managers.FlyManager;
+import me.smegasberla.apexStaff.managers.ShadowCamManager;
 import me.smegasberla.apexStaff.managers.XRayCheckManager;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -20,11 +21,13 @@ public class ApexCommand implements CommandExecutor, TabCompleter {
     private final XRayCheckManager manager;
     private final FlyManager flyManager;
     private final DatabaseManager databaseManager;
+    private final ShadowCamManager shadowCamManager;
 
-    public ApexCommand(XRayCheckManager manager, FlyManager flyManager, DatabaseManager databaseManager) {
+    public ApexCommand(XRayCheckManager manager, FlyManager flyManager, DatabaseManager databaseManager, ShadowCamManager shadowCamManager) {
         this.manager = manager;
         this.flyManager = flyManager;
         this.databaseManager = databaseManager;
+        this.shadowCamManager = shadowCamManager;
     }
 
     @Override
@@ -102,6 +105,13 @@ public class ApexCommand implements CommandExecutor, TabCompleter {
                         sender.sendMessage(noPermission);
                     }
                     break;
+                case "shadowcam":
+                    if (sender.hasPermission("apexstaff.shadowcam")) {
+                        new ShadowCamCommand(plugin, shadowCamManager).onCommand(sender, command, label, subArgs);
+                    } else {
+                        sender.sendMessage(noPermission);
+                    }
+                    break;
 
                 default:
                     plugin.sendHelpMessage(sender);
@@ -127,7 +137,8 @@ public class ApexCommand implements CommandExecutor, TabCompleter {
                     "fly",
                     "clearchat",
                     "dupeip",
-                    "ping"
+                    "ping",
+                    "shadowcam"
             );
             String partial = args[0].toLowerCase();
 
