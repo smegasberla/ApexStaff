@@ -1,0 +1,475 @@
+=====================================================
+            APEXSTAFF PLUGIN SPECIFICATIONS
+=====================================================
+
+MAIN COMMAND: /apexstaff  (Alias: /ax)
+
+Difficulty legend:  [EASY]  [MEDIUM]  [HARD]
+
+=====================================================
+1. STEALTH & INVESTIGATION
+=====================================================
+
+[EASY] /ax inspect <player>
+  Permission: apexstaff.inspect
+  Opens a GUI showing the target's live inventory,
+  armor slots, held item, health, hunger, and gamemode.
+  Implementation: Use InventoryView or a custom chest
+  GUI populated by cloning the player's inventory
+  contents. Refresh on each open — no listeners needed.
+
+------------------------------------------------------
+
+[MEDIUM] /ax follow <player>
+  Permission: apexstaff.follow
+  Silently teleports the staff member to the target's
+  location every few ticks. Toggle by running the
+  command again or by walking away (detect movement
+  delta). The staff member stays invisible via vanish
+  during the whole session.
+  Implementation: Schedule a BukkitRunnable that fires
+  every 2 ticks, compares positions and re-teleports.
+  Store the task ID per staff UUID so it can be
+  cancelled cleanly.
+
+------------------------------------------------------
+
+[MEDIUM] /ax mount <player>
+  Permission: apexstaff.mount
+  Makes the staff member an invisible passenger on the
+  target entity, sharing their exact POV and seeing
+  where they look. Dismounts silently on command or
+  when the target logs off.
+  Implementation: Use entity.addPassenger(staff).
+  Listen to PlayerQuitEvent and VehicleExitEvent to
+  auto-clean. Make the staff invisible and suppress
+  their name tag via a scoreboard team.
+
+------------------------------------------------------
+
+[HARD] /ax shadowcam <player>
+  Permission: apexstaff.shadowcam
+  Streams the target's first-person view to the staff
+  member as a spectator-style camera without actually
+  putting the staff in spectator mode. The staff stays
+  fully in survival/their own location.
+  Implementation: Use PacketEvents to inject
+  CAMERA (0x3C) packets pointing the staff client at
+  the target entity. Restore the camera packet on
+  toggle-off. No gamemode change needed on the server
+  side.
+
+------------------------------------------------------
+
+[EASY] /ax ping <player>
+  Permission: apexstaff.ping
+  Shows the target player's current ping in milliseconds.
+  Useful to determine if a player's suspicious behavior
+  is lag-related rather than intentional cheating.
+  Implementation: player.getPing() on Paper, or read
+  from the CraftPlayer handle on Spigot. Format with
+  color coding (green <80ms, yellow <150ms, red 150ms+).
+
+------------------------------------------------------
+
+[MEDIUM] /ax watchlist <player> <add|remove|list>
+  Permission: apexstaff.watchlist
+  Marks a player as "under observation." Staff online
+  get a subtle action bar alert whenever a watchlisted
+  player joins, performs a suspicious action, or uses
+  specific commands.
+  Implementation: Persist the watchlist to a YAML file.
+  On PlayerJoinEvent, check if the UUID is in the list
+  and broadcast an action bar message to all staff via
+  Audience (Adventure API). Hook into
+  PlayerCommandPreprocessEvent to flag command usage.
+
+------------------------------------------------------
+
+[HARD] /ax replay <player> <seconds>
+  Permission: apexstaff.replay
+  Records and plays back a short positional history of
+  a player — showing exactly where they moved, what
+  they looked at, and what they interacted with in the
+  last N seconds, rendered as a ghost NPC.
+  Implementation: Sample the target's Location and yaw/
+  pitch every tick into a bounded CircularBuffer. On
+  /ax replay, spawn a PacketEvents fake entity (NPC) at
+  each recorded frame using ADD_PLAYER + MOVE packets,
+  advancing one frame per tick. Clean up the fake entity
+  after playback finishes.
+
+=====================================================
+2. DISCIPLINE & CONTROL
+=====================================================
+
+[EASY] /ax notes <player> <add|list|remove> [text]
+  Permission: apexstaff.notes
+  Persistent staff-only notepad tied to a player UUID.
+  Stores timestamped entries (who added it, when,
+  what) that survive restarts.
+  Implementation: Serialize notes to a YAML or JSON
+  file keyed by UUID. Load on plugin enable, save on
+  add/remove. Show entries in chat with colored
+  formatting.
+
+------------------------------------------------------
+
+[EASY] /ax staffchat <message>
+  Permission: apexstaff.staffchat
+  Routes a message to all online players who have the
+  staffchat permission. Prefix with a distinct color
+  tag so it's unmistakable.
+  Implementation: Iterate Bukkit.getOnlinePlayers(),
+  filter by hasPermission, sendMessage. Also log to
+  console. Optionally support a toggle mode so staff
+  stay "in staffchat" until they type /ax sc again.
+
+------------------------------------------------------
+
+[MEDIUM] /ax slowmode <seconds>
+  Permission: apexstaff.slowmode
+  Enforces a per-player cooldown on chat messages.
+  Sends a denial message with remaining seconds if they
+  type too fast.
+  Implementation: On AsyncPlayerChatEvent, check a
+  HashMap<UUID, Long> of last-message timestamps.
+  Cancel the event and notify if the delta is under
+  the threshold. Let ops/staff bypass via permission.
+
+------------------------------------------------------
+
+[EASY] /ax warn <player> <reason>
+  Permission: apexstaff.warn
+  Issues a formal warning to a player, stored in their
+  profile and visible to all staff via /ax notes. The
+  player receives a prominent chat message and title
+  screen telling them they have been warned and why.
+  Implementation: Append a warning entry (staff, reason,
+  timestamp) to the player's YAML file. Send the target
+  a title + subtitle packet with a red warning message.
+  Track warn count per UUID for escalation logic.
+
+------------------------------------------------------
+
+[MEDIUM] /ax mute <player> [duration] [reason]
+  Permission: apexstaff.mute
+  Prevents a player from sending chat messages or using
+  chat-based commands for a given duration. Supports
+  permanent mutes and shows remaining time if the player
+  tries to chat.
+  Implementation: Store muted UUIDs in a map with
+  expiry timestamps. On AsyncPlayerChatEvent, cancel and
+  notify if muted. Run an expiry check on each event
+  rather than scheduling delayed tasks, to avoid timer
+  drift. Persist to YAML so mutes survive restarts.
+
+------------------------------------------------------
+
+[MEDIUM] /ax kick <player> [reason]
+  Permission: apexstaff.kick
+  Kicks a player with a formatted reason screen and logs
+  the action to staff chat and a modlog file. Unlike the
+  vanilla /kick, this formats a branded disconnect
+  screen and broadcasts to staff.
+  Implementation: player.kickPlayer() with an Adventure
+  Component for the disconnect message. Write the kick
+  to a modlog.yml with staff name, target, reason, and
+  timestamp. Broadcast to staff channel.
+
+------------------------------------------------------
+
+[HARD] /ax clearchat [global|player]
+  Permission: apexstaff.clearchat
+  Floods all (or a specific) player's chat with blank
+  lines to effectively wipe their visible chat history,
+  then optionally broadcasts a "Chat was cleared by
+  staff" notice.
+  Implementation: Send 100 newline messages to the
+  target audience. For global, use
+  Bukkit.broadcast with a staff-bypass permission.
+  Throttle with a cooldown to prevent abuse.
+
+
+  Permission: apexstaff.rollback
+  Reverts block changes made by a player in the last N
+  minutes within a configurable radius. Useful for
+  catching griefers mid-session.
+  Implementation: Log every BlockBreakEvent and
+  BlockPlaceEvent with UUID + timestamp + block state
+  to a queue (cap size to avoid memory bloat). On
+  rollback, replay the inverse operations in reverse
+  order. Consider integrating CoreProtect's API instead
+  of building logging from scratch.
+
+=====================================================
+3. STAFF MODE
+=====================================================
+
+[MEDIUM] /ax mode
+  Permission: apexstaff.staffmode
+  Toggles a full "Staff Environment" that isolates the
+  staff member from normal gameplay while on duty.
+
+  When ENABLED:
+  - Saves full inventory, location, health, and hunger
+    to a per-UUID cache (YAML or in-memory map).
+  - Clears inventory and grants the Staff Toolkit:
+      Slot 1 — Compass     → /ax tp GUI (click a player
+                              name to teleport to them)
+      Slot 2 — Book        → /ax notes quick-access GUI
+      Slot 3 — Ice Block   → Left-click to freeze/unfreeze
+                              the nearest looked-at player
+      Slot 4 — Stick       → Right-click to open inspect GUI
+                              on the looked-at player
+      Slot 9 — Red Dye     → Toggle vanish on/off
+  - Auto-enables vanish and flight.
+  - Sets gamemode to ADVENTURE to prevent accidental
+    block breaking.
+
+  When DISABLED:
+  - Restores saved inventory, location, health, hunger.
+  - Removes vanish and flight unless the player had
+    them before enabling staff mode.
+  - Returns to previous gamemode.
+
+  Implementation: Use PDC (PersistentDataContainer) or
+  a YAML file to persist the cache across restarts in
+  case of a crash while in staff mode. Assign item
+  actions via PlayerInteractEvent checking ItemMeta or
+  a custom PDC tag on each tool item. Prevent staff
+  mode items from being moved/dropped via
+  InventoryClickEvent and PlayerDropItemEvent.
+
+=====================================================
+4. CHAT & COMMUNICATION
+=====================================================
+
+[EASY] /ax broadcast <message>
+  Permission: apexstaff.broadcast
+  Sends a server-wide announcement formatted with a
+  distinct prefix and color, clearly attributed to
+  staff. Supports MiniMessage/legacy color codes.
+  Implementation: Bukkit.broadcast() with a custom
+  prefix component. Log to console. Add an optional
+  sound (ENTITY_ENDER_DRAGON_GROWL at low volume works
+  well as an attention-grabber).
+
+------------------------------------------------------
+
+[EASY] /ax fakejoin <player>
+  Permission: apexstaff.fakejoin
+  Broadcasts a fake join or quit message for a player,
+  useful to trick rule-breakers who go quiet when they
+  think staff logged on.
+  Implementation: Manually fire a formatted join/quit
+  message via Bukkit.broadcast(). No actual gamestate
+  changes — just a chat line. Keep it simple.
+
+------------------------------------------------------
+
+[MEDIUM] /ax commandspy [on|off]
+  Permission: apexstaff.commandspy
+  Toggles a feed that shows all commands typed by
+  non-staff players, sent silently to the staff member
+  in a distinct color.
+  Implementation: Listen to
+  PlayerCommandPreprocessEvent. For each staff member
+  with spy enabled (tracked in a Set<UUID>), send the
+  command string. Skip commands from players who have
+  a staff permission to avoid noise.
+
+------------------------------------------------------
+
+[MEDIUM] /ax chatlog <player> [lines]
+  Permission: apexstaff.chatlog
+  Retrieves the last N chat messages sent by a player
+  across the current session, displayed in staff chat
+  with timestamps.
+  Implementation: On AsyncPlayerChatEvent, append each
+  message to a per-UUID LinkedList capped at a max size
+  (e.g. 100 entries). /ax chatlog prints the tail of
+  that list. Not persisted across restarts by design —
+  it's a live-session tool.
+
+------------------------------------------------------
+
+[HARD] /ax socialspy [on|off]
+  Permission: apexstaff.socialspy
+  Intercepts and mirrors all private messages (/msg,
+  /tell, /r, and any registered PM aliases) to the
+  staff member silently.
+  Implementation: Listen to PlayerCommandPreprocessEvent
+  and match commands against a configurable list of PM
+  command prefixes. Parse the target and message, then
+  forward to all social-spy-enabled staff. Works across
+  most PM plugins without requiring direct integration.
+
+=====================================================
+5. REPORTING & TRANSPARENCY
+=====================================================
+
+[EASY] /ax report <player> <reason>
+  Permission: default (all players)
+  Lets regular players flag suspicious behavior. The
+  report is broadcast to all online staff and stored
+  in a log file with a timestamp.
+  Implementation: On command, write to a reports.yml
+  keyed by UUID, broadcast to staff via permission
+  check, and play a sound to online staff so they
+  notice it.
+
+------------------------------------------------------
+
+[MEDIUM] /ax activity <player>
+  Permission: apexstaff.activity
+  Shows a summary of the player's recent session:
+  join/leave times, commands used, chat messages sent,
+  blocks broken/placed, and distance walked.
+  Implementation: Track stats in a per-UUID object
+  updated by event listeners (PlayerCommandPreprocess,
+  AsyncPlayerChat, BlockBreak/Place, PlayerMoveEvent
+  sampled every N ticks). Display in a paginated chat
+  or a chest GUI.
+
+------------------------------------------------------
+
+[HARD] /ax dashboard
+  Permission: apexstaff.dashboard
+  Opens a real-time server overview GUI showing all
+  online players with colored status indicators (clean,
+  flagged, frozen, being watched), their ping, TPS
+  impact, and quick-action buttons.
+  Implementation: Build a chest GUI refreshed every
+  20 ticks via a BukkitRunnable. Each skull item
+  represents a player; lore lines show stats. Clicking
+  a skull opens an action menu (/ax inspect, freeze,
+  notes, etc.). Use SkullMeta with player textures for
+  visual clarity.
+
+------------------------------------------------------
+
+[MEDIUM] /ax modlog <player>
+  Permission: apexstaff.modlog
+  Shows the full moderation history for a player: warns,
+  mutes, kicks, bans, notes, and rollbacks — all in one
+  paginated GUI or chat view with dates and responsible
+  staff members.
+  Implementation: Aggregate entries from the various
+  per-UUID YAML files (notes.yml, warns, mutes, etc.)
+  into a single sorted list by timestamp. Display in a
+  book GUI (BookMeta) or paginated chest GUI for
+  readability.
+
+------------------------------------------------------
+
+[HARD] /ax alert <player> <trigger> <action>
+  Permission: apexstaff.alert
+  Sets an automated trip-wire on a player: if they type
+  a specific word, use a specific command, or enter a
+  specific region, a configurable action fires (notify
+  staff, auto-freeze, auto-screenshot via /ax activity
+  dump, etc.).
+  Implementation: Store alert rules per UUID in a map.
+  On each relevant event (chat, command, move), scan
+  active rules for that UUID. On match, execute the
+  configured action. Support wildcard patterns for
+  command/chat matching.
+
+=====================================================
+PERMISSION NODE SUMMARY
+=====================================================
+
+  apexstaff.*            Full access to all features
+  apexstaff.admin        Reload config, rollback, dashboard,
+                         alert, clearchat
+  apexstaff.mod          Inspect, follow, mount, shadowcam,
+                         replay, watchlist, mute, kick,
+                         commandspy, socialspy, modlog,
+                         activity, chatlog
+  apexstaff.helper       Staffchat, notes, warn, staffmode,
+                         slowmode, ping, broadcast,
+                         commandspy, report-receive
+  (no node)              /ax report (available to all)
+
+=====================================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
