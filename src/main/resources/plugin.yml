@@ -5,6 +5,8 @@ api-version: '1.21'
 prefix: ApexStaff
 authors: [ smegasberla ]
 description: High performance utilities and QoL features for server staff.
+softdepend:
+  - PlaceholderAPI
 commands:
   apexstaff:
     description: Main ApexStaff command

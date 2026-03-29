@@ -109,7 +109,7 @@ dupeip-message: |
 target-dupeip-message: |
   &8&m----------------------------------------
   &6&lDUPE-IP &7| &fResults for: &e{target}
-  &7IP: &f{ip} &7| &b{count} accounts found
+  &7IP: &f{target_ip} &7| &b{count} accounts found
   &8&m----------------------------------------
   {alt_list}
   &8&m----------------------------------------
@@ -119,7 +119,7 @@ alt-offline: "&c○ &7{alt} &7| &fLast seen: {last_seen}"
 
 # PING MESSAGES
 ping-message: "&aThe ping for &f{player}&a is: &f{ping}&a ms"
-target-ping-message: "&aThe ping for &f{target}&a is: &f{ping}&a ms"
+target-ping-message: "&aThe ping for &f{target}&a is: &f{target_ping}&a ms"
 
 #SHADOW CAM MESSAGES
 shadow-cam-yourself: "&cYou can't shadow cam yourself! "

@@ -4,6 +4,7 @@ import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.event.PacketListenerPriority;
 import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
 import me.smegasberla.apexStaff.commands.ApexCommand;
+import me.smegasberla.apexStaff.hook.PlaceholderAPIHook;
 import me.smegasberla.apexStaff.listeners.*;
 import me.smegasberla.apexStaff.listeners.packet.ShadowCamListener;
 import me.smegasberla.apexStaff.managers.*;
@@ -21,12 +22,15 @@ import static me.smegasberla.apexStaff.managers.DatabaseManager.addXrayData;
 public final class ApexStaff extends JavaPlugin {
 
     private static ApexStaff plugin;
-    private final XRayCheckManager sharedManager = new XRayCheckManager(this);
-    private final DatabaseManager databaseManager = new DatabaseManager();
-    private final FlyManager flyManager = new FlyManager();
-    private final DupeIPManager dupeIPManager = new DupeIPManager();
-    private final ShadowCamManager shadowCamManager = new ShadowCamManager();
-
+    private XRayCheckManager sharedManager = new XRayCheckManager(this);
+    private DatabaseManager databaseManager = new DatabaseManager();
+    private FlyManager flyManager = new FlyManager();
+    private DupeIPManager dupeIPManager = new DupeIPManager();
+    private ShadowCamManager shadowCamManager = new ShadowCamManager();
+    private VanishManager vanishManager = new VanishManager();
+    private FreezeManager freezeManager = new FreezeManager();
+    private PlaceholderManager placeholderManager = new PlaceholderManager();
+    private PlaceholderAPIHook papiHook;
 
 
     @Override
@@ -47,6 +51,18 @@ public final class ApexStaff extends JavaPlugin {
 
         plugin = this;
 
+        this.papiHook = new PlaceholderAPIHook(this);
+        this.papiHook.registerHook();
+
+        this.sharedManager = new XRayCheckManager(this);
+        this.databaseManager = new DatabaseManager();
+        this.flyManager = new FlyManager();
+        this.dupeIPManager = new DupeIPManager();
+        this.shadowCamManager = new ShadowCamManager();
+        this.freezeManager = new FreezeManager();
+        this.vanishManager = new VanishManager();
+        this.placeholderManager = new PlaceholderManager();
+
         getConfig().options().copyDefaults(true);
         saveDefaultConfig();
 
@@ -65,6 +81,12 @@ public final class ApexStaff extends JavaPlugin {
 
         PacketEvents.getAPI().getEventManager().registerListener(new ShadowCamListener(this, shadowCamManager), PacketListenerPriority.NORMAL);
 
+        if(Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+
+            papiHook.registerHook();
+
+        }
+
         DatabaseManager.init();
         DatabaseManager.createTables();
 
@@ -77,6 +99,42 @@ public final class ApexStaff extends JavaPlugin {
         DatabaseManager.closeConnection();
         PacketEvents.getAPI().terminate();
 
+    }
+
+    public PlaceholderManager getPlaceholderManager() {
+        return placeholderManager;
+    }
+
+    public PlaceholderAPIHook getPapiHook() {
+        return papiHook;
+    }
+
+    public XRayCheckManager geXrayCheckManager() {
+        return sharedManager;
+    }
+
+    public DatabaseManager getDatabaseManager() {
+        return databaseManager;
+    }
+
+    public FlyManager getFlyManager() {
+        return flyManager;
+    }
+
+    public DupeIPManager getDupeIPManager() {
+        return dupeIPManager;
+    }
+
+    public ShadowCamManager getShadowCamManager() {
+        return shadowCamManager;
+    }
+
+    public VanishManager getVanishManager() {
+        return vanishManager;
+    }
+
+    public FreezeManager getFreezeManager() {
+        return freezeManager;
     }
 
     public static void sendHelpMessage(CommandSender sender) {
