@@ -3,6 +3,7 @@ package me.smegasberla.apexStaff.managers;
 import me.smegasberla.apexStaff.ApexStaff;
 import me.smegasberla.apexStaff.models.FreezeModel;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.sqlite.SQLiteDataSource;
@@ -16,8 +17,14 @@ import java.util.logging.Level;
 
 public class DatabaseManager {
 
+    private final ApexStaff plugin;
+
     private static SQLiteDataSource dataSource;
     private static Connection connection;
+
+    public DatabaseManager(ApexStaff plugin) {
+        this.plugin = plugin;
+    }
 
     public static void init() {
         try {
@@ -71,6 +78,17 @@ public class DatabaseManager {
                 last_seen BIGINT DEFAULT (CAST((julianday('now') - 2440587.5) * 86400000 AS BIGINT))
             );
             CREATE INDEX IF NOT EXISTS idx_ip ON dupeip_data(ip);
+            """);
+
+            stmt.execute("""
+            CREATE TABLE IF NOT EXISTS apexstaff_notes (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                target_uuid VARCHAR(36) NOT NULL,
+                staff_uuid VARCHAR(36) NOT NULL,
+                staff_name VARCHAR(16) NOT NULL,
+                note_text TEXT NOT NULL,
+                timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+            )
             """);
 
             ApexStaff.getPlugin().getLogger().info("Database tables created successfully!");
@@ -476,6 +494,115 @@ public class DatabaseManager {
     public long getLastSeenByName(String name) {
         org.bukkit.OfflinePlayer op = org.bukkit.Bukkit.getOfflinePlayer(name);
         return getLastSeen(op.getUniqueId());
+    }
+
+    public void addNote(UUID target, UUID staff, String staffName, String text) {
+        String sql = "INSERT INTO apexstaff_notes (target_uuid, staff_uuid, staff_name, note_text) VALUES (?, ?, ?, ?)";
+
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setString(1, target.toString());
+            pstmt.setString(2, staff.toString());
+            pstmt.setString(3, staffName);
+            pstmt.setString(4, text);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public List<String> getNotes(UUID target, String targetName) {
+        List<String> notesList = new ArrayList<>();
+
+
+        String template = plugin.getConfig().getString("note-template", "[#{id}] {target}: {note}");
+
+        String sql = "SELECT id, note_text, staff_name, timestamp FROM apexstaff_notes WHERE target_uuid = ? ORDER BY id DESC";
+
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setString(1, target.toString());
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+
+                    String id = String.valueOf(rs.getInt("id"));
+                    String note = rs.getString("note_text");
+                    String staff = rs.getString("staff_name");
+                    String time = rs.getString("timestamp");
+
+
+                    String formattedNote = template
+                            .replace("{id}", id)
+                            .replace("{target}", targetName)
+                            .replace("{note}", note)
+                            .replace("{player}", staff)
+                            .replace("{time}", time);
+
+
+                    notesList.add(ChatColor.translateAlternateColorCodes('&', formattedNote));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return notesList;
+    }
+
+    public boolean removeNote(int noteId, UUID target) {
+        String sql = "DELETE FROM apexstaff_notes WHERE id = ? AND target_uuid = ?";
+
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setInt(1, noteId);
+            pstmt.setString(2, target.toString());
+
+            return pstmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public void clearPlayerNotes(UUID target) {
+        String sql = "DELETE FROM apexstaff_notes WHERE target_uuid = ?";
+
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setString(1, target.toString());
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public int getNoteCount(UUID target) {
+        String sql = "SELECT COUNT(*) FROM apexstaff_notes WHERE target_uuid = ?";
+
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setString(1, target.toString());
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public int getLastNoteId() {
+
+        String sql = "SELECT last_insert_rowid()";
+
+        try (Statement stmt = connection.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return -1;
     }
 
 

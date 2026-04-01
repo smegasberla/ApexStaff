@@ -136,6 +136,25 @@ shadow-cam-yourself: "&cYou can't shadow cam yourself! "
 started-shadow-cam: "&aYou have started shadow cam on {target}!"
 stopped-shadow-cam: "&cYou have stopped shadow cam on {target}!"
 
+# NOTES MESSAGES
+added-note: "&aSuccessfully added a note for {target}"
+removed-note: "&cSuccessfully removed a note for {target}"
+clear-all-notes: "&aCleared all notes for {target}!"
+note-yourself: "&cYou can't add a not on yourself!"
+no-notes-found: "&cNo notes found for {target}!"
+
+note-template: "&a[#{id}] &e{target}: &f{note}"
+
+# IMPORTANT: DO NOT ADD ANY COLOR BEFORE THE {notes_list} PLACEHOLDER, if you do all the notes will have that color.
+# If you wanna change colors, change in the note-template line in this config.yml
+list-note-message: |
+  &aApexStaff Moderation
+  &4&m---------------------------------------
+  &fNotes for: &e{target}
+  &4&m---------------------------------------
+  {notes_list}
+  
+
 #OPTIONS:
 freeze:
   # Block a player to write messages in chat while freezed
@@ -218,3 +237,24 @@ xray:
   # The conditions are:
   #  - Enough amount of blocks broken(amount-of-blocks in config.yml)
   #  - Percentage higher than alert-threshold
+
+notes:
+  #This will alert all players with apexstaff.admin permission when a player with notes does something
+  alert-for-noted-players:
+    #Enable the feature
+    enabled: true
+    #Alert when a noted player joins
+    alert-on-join: true
+    #Alert when a noted player quits
+    alert-on-quit: true
+    #Alert when a noted player is suspected of xray, the alert cooldown for this specific alert is handled by the xray check alert cooldown
+    alert-on-xray-suspicion: true
+    #Alert when an alt account of a noted player joins
+    alert-on-alt-join: true
+    #Alert when an alt account of a noted player quits
+    alert-on-alt-quit: true
+    #Minimum amount of notes that a player has to have to get alerted
+    min-notes-threshold: 1
+    #Alert cooldown for  all alerts except xray one
+    alert-cooldown: "60s"
+

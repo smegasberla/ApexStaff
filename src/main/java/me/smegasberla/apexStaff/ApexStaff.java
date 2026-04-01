@@ -23,7 +23,7 @@ public final class ApexStaff extends JavaPlugin {
 
   private static ApexStaff plugin;
   private XRayCheckManager sharedManager = new XRayCheckManager(this);
-  private DatabaseManager databaseManager = new DatabaseManager();
+  private DatabaseManager databaseManager = new DatabaseManager(this);
   private FlyManager flyManager = new FlyManager();
   private DupeIPManager dupeIPManager = new DupeIPManager();
   private ShadowCamManager shadowCamManager = new ShadowCamManager();
@@ -54,7 +54,7 @@ public final class ApexStaff extends JavaPlugin {
     this.papiHook.registerHook();
 
     this.sharedManager = new XRayCheckManager(this);
-    this.databaseManager = new DatabaseManager();
+    this.databaseManager = new DatabaseManager(this);
     this.flyManager = new FlyManager();
     this.dupeIPManager = new DupeIPManager();
     this.shadowCamManager = new ShadowCamManager();

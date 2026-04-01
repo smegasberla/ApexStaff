@@ -112,6 +112,14 @@ public class ApexCommand implements CommandExecutor, TabCompleter {
                         sender.sendMessage(noPermission);
                     }
                     break;
+                case "notes":
+                    if (sender.hasPermission("apexstaff.notes")) {
+                        new NotesCommand(plugin, databaseManager).onCommand(sender, command, label, subArgs);
+                    } else {
+                        sender.sendMessage(noPermission);
+                    }
+                    break;
+
 
                 default:
                     plugin.sendHelpMessage(sender);
@@ -138,7 +146,8 @@ public class ApexCommand implements CommandExecutor, TabCompleter {
                     "clearchat",
                     "dupeip",
                     "ping",
-                    "shadowcam"
+                    "shadowcam",
+                    "notes"
             );
             String partial = args[0].toLowerCase();
 

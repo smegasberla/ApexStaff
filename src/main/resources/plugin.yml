@@ -30,6 +30,7 @@ permissions:
       apexstaff.dupeip: true
       apexstaff.ping: true
       apexstaff.shadowcam: true
+      apexstaff.notes: true
 
   apexstaff.admin:
     description: Access ApexStaff main command
@@ -63,4 +64,7 @@ permissions:
     default: op
   apexstaff.shadowcam:
     description: Access /apexstaff shadowcam {player} command
+    default: op
+  apexstaff.notes:
+    description: Access /apexstaff notes {player} command
     default: op
