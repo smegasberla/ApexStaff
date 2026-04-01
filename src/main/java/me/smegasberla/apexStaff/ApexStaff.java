@@ -21,184 +21,185 @@ import static me.smegasberla.apexStaff.managers.DatabaseManager.addXrayData;
 
 public final class ApexStaff extends JavaPlugin {
 
-    private static ApexStaff plugin;
-    private XRayCheckManager sharedManager = new XRayCheckManager(this);
-    private DatabaseManager databaseManager = new DatabaseManager();
-    private FlyManager flyManager = new FlyManager();
-    private DupeIPManager dupeIPManager = new DupeIPManager();
-    private ShadowCamManager shadowCamManager = new ShadowCamManager();
-    private VanishManager vanishManager = new VanishManager();
-    private FreezeManager freezeManager = new FreezeManager();
-    private PlaceholderManager placeholderManager = new PlaceholderManager();
-    private PlaceholderAPIHook papiHook;
+  private static ApexStaff plugin;
+  private XRayCheckManager sharedManager = new XRayCheckManager(this);
+  private DatabaseManager databaseManager = new DatabaseManager();
+  private FlyManager flyManager = new FlyManager();
+  private DupeIPManager dupeIPManager = new DupeIPManager();
+  private ShadowCamManager shadowCamManager = new ShadowCamManager();
+  private VanishManager vanishManager = new VanishManager();
+  private FreezeManager freezeManager = new FreezeManager();
+  private PlaceholderManager placeholderManager = new PlaceholderManager(this, vanishManager);
+  private PlaceholderAPIHook papiHook;
 
+  @Override
+  public void onLoad() {
 
-    @Override
-    public void onLoad() {
+    PacketEvents.setAPI(SpigotPacketEventsBuilder.build(this));
+    PacketEvents.getAPI().getSettings()
+        .reEncodeByDefault(true)
+        .bStats(false)
+        .checkForUpdates(true);
 
-        PacketEvents.setAPI(SpigotPacketEventsBuilder.build(this));
-        PacketEvents.getAPI().getSettings()
-                .reEncodeByDefault(true)
-                .bStats(false)
-                .checkForUpdates(true);
+    PacketEvents.getAPI().load();
 
-        PacketEvents.getAPI().load();
+  }
+
+  @Override
+  public void onEnable() {
+
+    plugin = this;
+
+    this.papiHook = new PlaceholderAPIHook(this);
+    this.papiHook.registerHook();
+
+    this.sharedManager = new XRayCheckManager(this);
+    this.databaseManager = new DatabaseManager();
+    this.flyManager = new FlyManager();
+    this.dupeIPManager = new DupeIPManager();
+    this.shadowCamManager = new ShadowCamManager();
+    this.freezeManager = new FreezeManager();
+    this.vanishManager = new VanishManager();
+    this.placeholderManager = new PlaceholderManager(this, vanishManager);
+
+    getConfig().options().copyDefaults(true);
+    saveDefaultConfig();
+
+    PacketEvents.getAPI().init();
+
+    getCommand("apexstaff").setExecutor(new ApexCommand(sharedManager, flyManager, databaseManager, shadowCamManager));
+
+    getServer().getPluginManager().registerEvents(new MovementListener(this), this);
+    getServer().getPluginManager().registerEvents(new DamageListener(this), this);
+    getServer().getPluginManager().registerEvents(new ChatListener(this), this);
+    getServer().getPluginManager().registerEvents(new QuitListener(this, databaseManager, sharedManager, dupeIPManager),
+        this);
+    getServer().getPluginManager().registerEvents(new AsyncPreLoginListener(this, databaseManager, sharedManager),
+        this);
+    getServer().getPluginManager().registerEvents(new BlockBreakListener(this, sharedManager), this);
+    getServer().getPluginManager().registerEvents(new JoinListener(this, dupeIPManager, databaseManager), this);
+
+    PacketEvents.getAPI().getEventManager().registerListener(new ShadowCamListener(this, shadowCamManager),
+        PacketListenerPriority.NORMAL);
+
+    if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+
+      papiHook.registerHook();
 
     }
 
-    @Override
-    public void onEnable() {
+    DatabaseManager.init();
+    DatabaseManager.createTables();
 
-        plugin = this;
+  }
 
-        this.papiHook = new PlaceholderAPIHook(this);
-        this.papiHook.registerHook();
+  @Override
+  public void onDisable() {
 
-        this.sharedManager = new XRayCheckManager(this);
-        this.databaseManager = new DatabaseManager();
-        this.flyManager = new FlyManager();
-        this.dupeIPManager = new DupeIPManager();
-        this.shadowCamManager = new ShadowCamManager();
-        this.freezeManager = new FreezeManager();
-        this.vanishManager = new VanishManager();
-        this.placeholderManager = new PlaceholderManager();
+    DatabaseManager.closeConnection();
+    PacketEvents.getAPI().terminate();
 
-        getConfig().options().copyDefaults(true);
-        saveDefaultConfig();
+  }
 
-        PacketEvents.getAPI().init();
+  public PlaceholderManager getPlaceholderManager() {
+    return placeholderManager;
+  }
 
-        getCommand("apexstaff").setExecutor(new ApexCommand(sharedManager, flyManager, databaseManager, shadowCamManager));
+  public PlaceholderAPIHook getPapiHook() {
+    return papiHook;
+  }
 
+  public XRayCheckManager getXrayCheckManager() {
+    return sharedManager;
+  }
 
-        getServer().getPluginManager().registerEvents(new MovementListener(this), this);
-        getServer().getPluginManager().registerEvents(new DamageListener(this), this);
-        getServer().getPluginManager().registerEvents(new ChatListener(this), this);
-        getServer().getPluginManager().registerEvents(new QuitListener(this, databaseManager, sharedManager, dupeIPManager), this);
-        getServer().getPluginManager().registerEvents(new AsyncPreLoginListener(this, databaseManager, sharedManager), this);
-        getServer().getPluginManager().registerEvents(new BlockBreakListener(this, sharedManager), this);
-        getServer().getPluginManager().registerEvents(new JoinListener(this, dupeIPManager, databaseManager), this);
+  public DatabaseManager getDatabaseManager() {
+    return databaseManager;
+  }
 
-        PacketEvents.getAPI().getEventManager().registerListener(new ShadowCamListener(this, shadowCamManager), PacketListenerPriority.NORMAL);
+  public FlyManager getFlyManager() {
+    return flyManager;
+  }
 
-        if(Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+  public DupeIPManager getDupeIPManager() {
+    return dupeIPManager;
+  }
 
-            papiHook.registerHook();
+  public ShadowCamManager getShadowCamManager() {
+    return shadowCamManager;
+  }
 
+  public VanishManager getVanishManager() {
+    return vanishManager;
+  }
+
+  public FreezeManager getFreezeManager() {
+    return freezeManager;
+  }
+
+  public static void sendHelpMessage(CommandSender sender) {
+    sender.sendMessage(ChatColor.DARK_GRAY + "=================================");
+    sender.sendMessage(ChatColor.GOLD + "        ApexStaff Help Menu");
+    sender.sendMessage(ChatColor.DARK_GRAY + "=================================");
+    sender.sendMessage("");
+    sender.sendMessage(
+        ChatColor.AQUA + "/apexstaff" + ChatColor.GRAY + " - " + ChatColor.WHITE + "Show this help message");
+    sender.sendMessage(ChatColor.AQUA + "/apexstaff reload" + ChatColor.GRAY + " - " + ChatColor.WHITE
+        + "Reload the plugin configuration");
+    sender.sendMessage(ChatColor.AQUA + "/apexstaff vanish <player>" + ChatColor.GRAY + " - " + ChatColor.WHITE
+        + "Toggle vanish mode");
+    sender.sendMessage(
+        ChatColor.AQUA + "/apexstaff freeze <player>" + ChatColor.GRAY + " - " + ChatColor.WHITE + "Freeze a player");
+    sender.sendMessage(ChatColor.AQUA + "/apexstaff xray <player> [info|clear]" + ChatColor.GRAY + " - "
+        + ChatColor.WHITE + "Get info on a player regarding xray checks");
+    sender.sendMessage("");
+    sender.sendMessage(ChatColor.DARK_GRAY + "=================================");
+  }
+
+  public static ApexStaff getPlugin() {
+    return plugin;
+  }
+
+  public void startCleanupTask() {
+
+    Bukkit.getScheduler().runTaskTimerAsynchronously(this, () -> {
+
+      int deleted = DatabaseManager.cleanupExpiredBans();
+
+      java.util.List<java.util.UUID> toRemove = new java.util.ArrayList<>();
+
+      for (java.util.UUID uuid : FreezeModel.getAllBannedUUIDs()) {
+        FreezeModel model = FreezeModel.getBan(uuid);
+        if (model != null && model.isExpired()) {
+          toRemove.add(uuid);
         }
+      }
 
-        DatabaseManager.init();
-        DatabaseManager.createTables();
+      for (java.util.UUID uuid : toRemove) {
+        FreezeModel.removeBan(uuid);
+      }
 
+    }, 20L * 60, 20L * 60 * 5);
+  }
 
-    }
+  public void startSaveXrayDataStats() {
 
-    @Override
-    public void onDisable() {
+    Bukkit.getScheduler().runTaskTimerAsynchronously(this, () -> {
 
-        DatabaseManager.closeConnection();
-        PacketEvents.getAPI().terminate();
+      for (Player player : Bukkit.getOnlinePlayers()) {
+        UUID uuid = player.getUniqueId();
 
-    }
+        if (sharedManager.totalBlocks.containsKey(uuid)) {
+          int blocks = sharedManager.totalBlocks.get(uuid);
+          int ores = sharedManager.totalOres.get(uuid);
 
-    public PlaceholderManager getPlaceholderManager() {
-        return placeholderManager;
-    }
+          addXrayData(player, blocks, ores);
+        }
+      }
 
-    public PlaceholderAPIHook getPapiHook() {
-        return papiHook;
-    }
+    }, 20L * 60 * 5, 20L * 60 * 5);
 
-    public XRayCheckManager geXrayCheckManager() {
-        return sharedManager;
-    }
+  }
 
-    public DatabaseManager getDatabaseManager() {
-        return databaseManager;
-    }
-
-    public FlyManager getFlyManager() {
-        return flyManager;
-    }
-
-    public DupeIPManager getDupeIPManager() {
-        return dupeIPManager;
-    }
-
-    public ShadowCamManager getShadowCamManager() {
-        return shadowCamManager;
-    }
-
-    public VanishManager getVanishManager() {
-        return vanishManager;
-    }
-
-    public FreezeManager getFreezeManager() {
-        return freezeManager;
-    }
-
-    public static void sendHelpMessage(CommandSender sender) {
-        sender.sendMessage(ChatColor.DARK_GRAY + "=================================");
-        sender.sendMessage(ChatColor.GOLD + "        ApexStaff Help Menu");
-        sender.sendMessage(ChatColor.DARK_GRAY + "=================================");
-        sender.sendMessage("");
-        sender.sendMessage(ChatColor.AQUA + "/apexstaff" + ChatColor.GRAY + " - " + ChatColor.WHITE + "Show this help message");
-        sender.sendMessage(ChatColor.AQUA + "/apexstaff reload" + ChatColor.GRAY + " - " + ChatColor.WHITE + "Reload the plugin configuration");
-        sender.sendMessage(ChatColor.AQUA + "/apexstaff vanish <player>" + ChatColor.GRAY + " - " + ChatColor.WHITE + "Toggle vanish mode");
-        sender.sendMessage(ChatColor.AQUA + "/apexstaff freeze <player>" + ChatColor.GRAY + " - " + ChatColor.WHITE + "Freeze a player");
-        sender.sendMessage(ChatColor.AQUA + "/apexstaff xray <player> [info|clear]" + ChatColor.GRAY + " - " + ChatColor.WHITE + "Get info on a player regarding xray checks");
-        sender.sendMessage("");
-        sender.sendMessage(ChatColor.DARK_GRAY + "=================================");
-    }
-
-    public static ApexStaff getPlugin() {
-        return plugin;
-    }
-
-    public void startCleanupTask() {
-
-        Bukkit.getScheduler().runTaskTimerAsynchronously(this, () -> {
-
-
-            int deleted = DatabaseManager.cleanupExpiredBans();
-
-            java.util.List<java.util.UUID> toRemove = new java.util.ArrayList<>();
-
-
-            for (java.util.UUID uuid : FreezeModel.getAllBannedUUIDs()) {
-                FreezeModel model = FreezeModel.getBan(uuid);
-                if (model != null && model.isExpired()) {
-                    toRemove.add(uuid);
-                }
-            }
-
-            for (java.util.UUID uuid : toRemove) {
-                FreezeModel.removeBan(uuid);
-            }
-
-
-        }, 20L * 60, 20L * 60 * 5);
-    }
-
-    public void startSaveXrayDataStats() {
-
-            Bukkit.getScheduler().runTaskTimerAsynchronously(this, () -> {
-
-                for (Player player : Bukkit.getOnlinePlayers()) {
-                    UUID uuid = player.getUniqueId();
-
-
-                    if (sharedManager.totalBlocks.containsKey(uuid)) {
-                        int blocks = sharedManager.totalBlocks.get(uuid);
-                        int ores = sharedManager.totalOres.get(uuid);
-
-
-                        addXrayData(player, blocks, ores);
-                    }
-                }
-
-            }, 20L * 60 * 5, 20L * 60 * 5);
-
-    }
 
 }

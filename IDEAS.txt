@@ -47,20 +47,6 @@ Difficulty legend:  [EASY]  [MEDIUM]  [HARD]
 
 ------------------------------------------------------
 
-[HARD] /ax shadowcam <player>
-  Permission: apexstaff.shadowcam
-  Streams the target's first-person view to the staff
-  member as a spectator-style camera without actually
-  putting the staff in spectator mode. The staff stays
-  fully in survival/their own location.
-  Implementation: Use PacketEvents to inject
-  CAMERA (0x3C) packets pointing the staff client at
-  the target entity. Restore the camera packet on
-  toggle-off. No gamemode change needed on the server
-  side.
-
-------------------------------------------------------
-
 [MEDIUM] /ax watchlist <player> <add|remove|list>
   Permission: apexstaff.watchlist
   Marks a player as "under observation." Staff online

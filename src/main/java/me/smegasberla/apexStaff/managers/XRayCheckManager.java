@@ -1,63 +1,132 @@
 package me.smegasberla.apexStaff.managers;
 
 import me.smegasberla.apexStaff.ApexStaff;
+import me.smegasberla.apexStaff.utils.MessageUtils;
+
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
+import static net.kyori.adventure.text.event.ClickEvent.clickEvent;
+
 public class XRayCheckManager {
 
-    private XRayCheckManager manager;
+  private XRayCheckManager manager;
 
-    private final ApexStaff plugin;
+  private final ApexStaff plugin;
 
-    public HashMap<UUID, Integer> totalBlocks = new HashMap<>();
-    public HashMap<UUID, Integer> totalOres = new HashMap<>();
+  public HashMap<UUID, Integer> totalBlocks = new HashMap<>();
+  public HashMap<UUID, Integer> totalOres = new HashMap<>();
 
-    public XRayCheckManager(ApexStaff plugin) {
-        this.plugin = plugin;
+  public XRayCheckManager(ApexStaff plugin) {
+    this.plugin = plugin;
+  }
+
+  public double calcutaleXRayPercentage(Player p) {
+
+    FileConfiguration config = plugin.getConfig();
+
+    UUID uuid = p.getUniqueId();
+
+    int totalBlockNumber = totalBlocks.getOrDefault(uuid, 0);
+    int totalOreNumber = totalOres.getOrDefault(uuid, 0);
+
+    if (totalBlockNumber == 0) {
+      return 0.0;
     }
 
-    public double calcutaleXRayPercentage(Player p) {
+    double percentage = ((double) totalOreNumber / totalBlockNumber) * 100;
 
-        FileConfiguration config = plugin.getConfig();
+    return percentage;
+  }
 
-        UUID uuid = p.getUniqueId();
+  public XRayCheckManager getManager() {
+    return manager;
+  }
 
-        int totalBlockNumber = totalBlocks.getOrDefault(uuid, 0);
-        int totalOreNumber = totalOres.getOrDefault(uuid, 0);
+  public List<String> getMaterialList() {
 
-        if (totalBlockNumber == 0) {
-            return 0.0;
-        }
+    List<String> materialListCheck = plugin.getConfig().getStringList("xray.xray-blocks");
 
-        double percentage = ((double) totalOreNumber / totalBlockNumber) * 100;
+    return materialListCheck;
 
-        return percentage;
+  }
+
+  public boolean isSuspect(Player p) {
+    UUID uuid = p.getUniqueId();
+    int totalMined = totalBlocks.getOrDefault(uuid, 0);
+    int minBlocks = plugin.getConfig().getInt("xray.amount-of-blocks");
+    double percentage = calcutaleXRayPercentage(p);
+    double threshold = plugin.getConfig().getDouble("xray.alert-threshold");
+
+    return totalMined >= minBlocks && percentage >= threshold;
+  }
+
+  public void sendStaffAlert(Player target, Player p) {
+
+    double ratio = calcutaleXRayPercentage(target);
+
+    String suspicionLevel = null;
+
+    if (isSuspect(target)) {
+
+      suspicionLevel = plugin.getConfig().getString("xray-suspect.suspect");
+
+    } else {
+
+      suspicionLevel = plugin.getConfig().getString("xray-suspect.clear");
+
     }
 
-    public XRayCheckManager getManager() {
-        return manager;
+    String riskLevel = null;
+
+    double threshold = (double) plugin.getConfig().getDouble("xray.alert-threshold");
+    double highRiskDouble = plugin.getConfig().getDouble("xray.high-risk");
+
+    if (ratio < threshold) {
+
+      riskLevel = plugin.getConfig().getString("xray-risk-level.low");
+
+    } else if (ratio >= threshold && ratio < highRiskDouble) {
+
+      riskLevel = plugin.getConfig().getString("xray-risk-level.moderate");
+
+    } else {
+
+      riskLevel = plugin.getConfig().getString("xray-risk-level.high");
+
     }
 
-    public List<String> getMaterialList() {
+    String formattedRatio = String.format("%.2f%%", ratio);
 
-        List<String> materialListCheck = plugin.getConfig().getStringList("xray.xray-blocks");
+    String message = MessageUtils.getMessage(plugin, "alert-message",
+        "{target}", target.getName(),
+        "{percentage_of_xray}", formattedRatio,
+        "{suspect_status}", String.valueOf(suspicionLevel),
+        "{risk_of_xray}", String.valueOf(riskLevel)
 
-        return materialListCheck;
+    );
 
-    }
+    String tpButtonName = MessageUtils.getMessage(plugin, "xray.tp-button-text");
 
-    public boolean isSuspect(Player p) {
-        UUID uuid = p.getUniqueId();
-        int totalMined = totalBlocks.getOrDefault(uuid, 0);
-        int minBlocks = plugin.getConfig().getInt("xray.amount-of-blocks");
-        double percentage = calcutaleXRayPercentage(p);
-        double threshold = plugin.getConfig().getDouble("xray.alert-threshold");
+    if(tpButtonName == null) tpButtonName = "[CLICK TO TP]";
 
-        return totalMined >= minBlocks && percentage >= threshold;
-    }
+    Component text = Component.text(message);
+
+    Component button = Component.text(tpButtonName)
+                    .clickEvent(ClickEvent.runCommand("/tp " + p.getName()));
+
+    Component finalMessage = text.append(button);
+
+    p.sendMessage(finalMessage);
+
+  }
+
+
 }

@@ -72,6 +72,16 @@ xray-message: |
   &6Risk: {risk_of_xray}
   &6Suspect status: &f{suspect_status}
 
+alert-message: |
+  &aApexStaff Moderation
+  &4&m---------------------------------------
+  &e{target}
+  &cHas been found suspicius of xray
+  &fPercentage of xray: &e{percentage_of_xray}%
+  &fSuspicion level: {suspect_status}
+  &fRisk: {risk_of_xray}
+
+
 xray-risk-level:
   low: "&aLOW"
   moderate: "&eMODERATE"
@@ -196,6 +206,12 @@ xray:
   high-risk: 70.0
   #Amount of mining blocks to break before getting flagged as suspect if the percentage is higher than alert-threshold
   amount-of-blocks: 100
+  #Choose if to enable automatic alert for xray, if set to false the interval option won't work
+  automatic-alert: true
+  #Amount of time that has to pass for the plugin to send an alert when someone is suspected of xray
+  alert-interval: "2m"
+  #Text of the teleport button for the automatic alert message
+  tp-button-text: "&a[CLICK TO TP]"
 
   # How it works:
   # Suspect status: {suspect_status} this line tells you if the minimum requirements were met
