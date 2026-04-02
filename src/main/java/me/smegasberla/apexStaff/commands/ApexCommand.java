@@ -10,6 +10,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -154,6 +155,43 @@ public class ApexCommand implements CommandExecutor, TabCompleter {
             for (String subCmd : subCommands) {
                 if (subCmd.startsWith(partial)) {
                     completions.add(subCmd);
+                }
+            }
+        } else if (args.length == 2) {
+            String subCommand = args[0].toLowerCase();
+            String partial = args[1].toLowerCase();
+
+            // Commands that take a player name as second arg
+            List<String> playerCommands = Arrays.asList("vanish", "freeze", "xray", "fly", "clearchat", "dupeip", "ping", "shadowcam", "notes");
+            
+            if (playerCommands.contains(subCommand)) {
+                for (Player onlinePlayer : org.bukkit.Bukkit.getOnlinePlayers()) {
+                    String name = onlinePlayer.getName();
+                    if (name.toLowerCase().startsWith(partial)) {
+                        completions.add(name);
+                    }
+                }
+            }
+        } else if (args.length == 3) {
+            String subCommand = args[0].toLowerCase();
+            String partial = args[2].toLowerCase();
+
+            // Notes subcommands: add, remove, clear, list
+            if (subCommand.equals("notes")) {
+                List<String> noteSubCommands = Arrays.asList("add", "remove", "clear", "list");
+                for (String noteCmd : noteSubCommands) {
+                    if (noteCmd.startsWith(partial)) {
+                        completions.add(noteCmd);
+                    }
+                }
+            }
+            // Xray subcommands: info, clear
+            else if (subCommand.equals("xray")) {
+                List<String> xraySubCommands = Arrays.asList("info", "clear");
+                for (String xrayCmd : xraySubCommands) {
+                    if (xrayCmd.startsWith(partial)) {
+                        completions.add(xrayCmd);
+                    }
                 }
             }
         }

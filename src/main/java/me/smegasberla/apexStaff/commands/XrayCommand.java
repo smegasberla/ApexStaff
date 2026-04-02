@@ -8,12 +8,16 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
-public class XrayCommand implements CommandExecutor {
+public class XrayCommand implements CommandExecutor, TabCompleter {
 
     private final ApexStaff plugin;
     private final XRayCheckManager manager;
@@ -56,12 +60,12 @@ public class XrayCommand implements CommandExecutor {
         switch (subArg) {
             case "info":
 
-                if(target.hasPermission("apexstaff.exempt")) {
+                if (target.hasPermission("apexstaff.exempt")) {
                     String exemptMessage = MessageUtils.getMessage(plugin, "exempt-message");
 
-                    if(exemptMessage != null) {
+                    if (exemptMessage != null) {
                         p.sendMessage(exemptMessage);
-                        return  true;
+                        return true;
                     }
 
                 }
@@ -111,12 +115,12 @@ public class XrayCommand implements CommandExecutor {
 
             case "clear":
 
-                if(target.hasPermission("apexstaff.exempt")) {
+                if (target.hasPermission("apexstaff.exempt")) {
                     String exemptMessage = MessageUtils.getMessage(plugin, "exempt-message");
 
-                    if(exemptMessage != null) {
+                    if (exemptMessage != null) {
                         p.sendMessage(exemptMessage);
-                        return  true;
+                        return true;
                     }
 
                 }
@@ -134,5 +138,32 @@ public class XrayCommand implements CommandExecutor {
                 return true;
         }
     }
+    
+        @Override
+        public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, String[] args) {
+            List<String> completions = new ArrayList<>();
+    
+            if (args.length == 1) {
+                String partial = args[0].toLowerCase();
+                for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+                    String name = onlinePlayer.getName();
+                    if (name.toLowerCase().startsWith(partial)) {
+                        completions.add(name);
+                    }
+                }
+            } else if (args.length == 2) {
+                String partial = args[1].toLowerCase();
+                List<String> xraySubCommands = Arrays.asList("info", "clear");
+                for (String xrayCmd : xraySubCommands) {
+                    if (xrayCmd.startsWith(partial)) {
+                        completions.add(xrayCmd);
+                    }
+                }
+            }
+    
+            return completions;
+        }
+    
+    }
 
-}
+

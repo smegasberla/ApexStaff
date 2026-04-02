@@ -77,19 +77,6 @@ Difficulty legend:  [EASY]  [MEDIUM]  [HARD]
 =====================================================
 2. DISCIPLINE & CONTROL
 =====================================================
-
-[EASY] /ax notes <player> <add|list|remove> [text]
-  Permission: apexstaff.notes
-  Persistent staff-only notepad tied to a player UUID.
-  Stores timestamped entries (who added it, when,
-  what) that survive restarts.
-  Implementation: Serialize notes to a YAML or JSON
-  file keyed by UUID. Load on plugin enable, save on
-  add/remove. Show entries in chat with colored
-  formatting.
-
-------------------------------------------------------
-
 [EASY] /ax staffchat <message>
   Permission: apexstaff.staffchat
   Routes a message to all online players who have the
