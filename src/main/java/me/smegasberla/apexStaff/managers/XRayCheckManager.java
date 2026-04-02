@@ -120,7 +120,7 @@ public class XRayCheckManager {
     Component text = Component.text(message);
 
     Component button = Component.text(tpButtonName)
-                    .clickEvent(ClickEvent.runCommand("/tp " + p.getName()));
+                    .clickEvent(ClickEvent.runCommand("/tp " + target.getName()));
 
     Component finalMessage = text.append(button);
 

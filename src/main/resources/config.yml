@@ -140,7 +140,7 @@ stopped-shadow-cam: "&cYou have stopped shadow cam on {target}!"
 added-note: "&aSuccessfully added a note for {target}"
 removed-note: "&cSuccessfully removed a note for {target}"
 clear-all-notes: "&aCleared all notes for {target}!"
-note-yourself: "&cYou can't add a not on yourself!"
+note-yourself: "&cYou can't use notes on yourself!"
 no-notes-found: "&cNo notes found for {target}!"
 
 note-template: "&a[#{id}] &e{target}: &f{note}"
@@ -151,9 +151,14 @@ list-note-message: |
   &aApexStaff Moderation
   &4&m---------------------------------------
   &fNotes for: &e{target}
-  &4&m---------------------------------------
+  &4&m---------------------------------------&f
   {notes_list}
-  
+
+join-notes-alert: "&8[&e#Notes&8] &b{target} &7has joined the server! &8(&7You have &e{number_of_notes} &7notes on &b{target}&8)"
+alt-join-notes-alert: "&8[&e#Notes&8] &6An alt of &b{target} &6has joined! &7Alt: &f{alt} &8(&7Total notes on {alt}: &e{number_of_notes}&7)"
+quit-notes-alert: "&8[&e#Notes&8] &b{target} &7has quitted the server! &8(&7Total notes: &e{number_of_notes}&8)"
+alt-quit-notes-alert: "&8[&e#Notes&8] &6An alt of &b{target} &6has quitted! &7Alt: &f{alt} &8(&7Total notes on {alt}: &e{number_of_notes}&7)"
+xray-check-alert: "&8[&e#Notes&8] &b{target} &7is suspected of &cX-Ray&7! &8(&7Notes: &e{number_of_notes}&8)"
 
 #OPTIONS:
 freeze:
@@ -255,6 +260,4 @@ notes:
     alert-on-alt-quit: true
     #Minimum amount of notes that a player has to have to get alerted
     min-notes-threshold: 1
-    #Alert cooldown for  all alerts except xray one
-    alert-cooldown: "60s"
 

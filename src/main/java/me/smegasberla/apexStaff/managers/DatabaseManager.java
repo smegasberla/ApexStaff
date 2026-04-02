@@ -605,6 +605,30 @@ public class DatabaseManager {
         return -1;
     }
 
+    public String getStaffUUID(UUID targetUUID) {
+
+        String sql = "SELECT staff_uuid FROM apexstaff_notes WHERE target_uuid = ? ORDER BY id DESC";
+
+        try(PreparedStatement ppstm = connection.prepareStatement(sql)) {
+
+            ppstm.setString(1,  targetUUID.toString());
+
+            try (ResultSet rs = ppstm.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("staff_uuid");
+                }
+            }
+
+        }catch(SQLException e){
+
+            e.printStackTrace();
+
+        }
+
+        return null;
+
+    }
+
 
 
 

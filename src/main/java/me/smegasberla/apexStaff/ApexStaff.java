@@ -76,8 +76,8 @@ public final class ApexStaff extends JavaPlugin {
         this);
     getServer().getPluginManager().registerEvents(new AsyncPreLoginListener(this, databaseManager, sharedManager),
         this);
-    getServer().getPluginManager().registerEvents(new BlockBreakListener(this, sharedManager), this);
-    getServer().getPluginManager().registerEvents(new JoinListener(this, dupeIPManager, databaseManager), this);
+    getServer().getPluginManager().registerEvents(new BlockBreakListener(this, databaseManager,sharedManager), this);
+    getServer().getPluginManager().registerEvents(new JoinListener(this,this, dupeIPManager, databaseManager), this);
 
     PacketEvents.getAPI().getEventManager().registerListener(new ShadowCamListener(this, shadowCamManager),
         PacketListenerPriority.NORMAL);
