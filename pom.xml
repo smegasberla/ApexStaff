@@ -28,49 +28,6 @@
                     <target>${java.version}</target>
                 </configuration>
             </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>3.5.3</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                        <configuration>
-                            <minimizeJar>true</minimizeJar>
-                            <createDependencyReducedPom>false</createDependencyReducedPom>
-                            <relocations>
-                                <relocation>
-                                    <pattern>com.github.retrooper.packetevents</pattern>
-                                    <shadedPattern>me.smegasberla.packetevents.api</shadedPattern>
-                                </relocation>
-                                <relocation>
-                                    <pattern>io.github.retrooper.packetevents</pattern>
-                                    <shadedPattern>me.smegasberla.packetevents.impl</shadedPattern>
-                                </relocation>
-                                <relocation>
-                                    <pattern>cc.ekblad.konform</pattern>
-                                    <shadedPattern>me.smegasberla.packetevents.konform</shadedPattern>
-                                </relocation>
-                            </relocations>
-                            <filters>
-                                <filter>
-                                    <artifact>*:*</artifact>
-                                    <excludes>
-                                        <exclude>META-INF/*.SF</exclude>
-                                        <exclude>META-INF/*.DSA</exclude>
-                                        <exclude>META-INF/*.RSA</exclude>
-                                        <exclude>META-INF/MANIFEST.MF</exclude>
-                                    </excludes>
-                                </filter>
-                            </filters>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
         <resources>
             <resource>
@@ -107,8 +64,7 @@
             <groupId>com.github.retrooper</groupId>
             <artifactId>packetevents-spigot</artifactId>
             <version>2.11.2</version>
-            <scope>compile</scope>
-        </dependency>
+            <scope>provided</scope> </dependency>
 
         <dependency>
             <groupId>org.xerial</groupId>

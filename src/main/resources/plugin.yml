@@ -1,12 +1,15 @@
 name: ApexStaff
 version: '1.3'
 main: me.smegasberla.apexStaff.ApexStaff
+paper-plugin-loader: me.smegasberla.apexStaff.ApexStaffLoader
 api-version: '1.21'
 prefix: ApexStaff
 authors: [ smegasberla ]
 description: High performance utilities and QoL features for server staff.
 softdepend:
   - PlaceholderAPI
+
+
 commands:
   apexstaff:
     description: Main ApexStaff command

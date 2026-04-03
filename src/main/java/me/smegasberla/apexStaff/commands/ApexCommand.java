@@ -161,7 +161,7 @@ public class ApexCommand implements CommandExecutor, TabCompleter {
             String subCommand = args[0].toLowerCase();
             String partial = args[1].toLowerCase();
 
-            // Commands that take a player name as second arg
+            
             List<String> playerCommands = Arrays.asList("vanish", "freeze", "xray", "fly", "clearchat", "dupeip", "ping", "shadowcam", "notes");
             
             if (playerCommands.contains(subCommand)) {
@@ -176,7 +176,7 @@ public class ApexCommand implements CommandExecutor, TabCompleter {
             String subCommand = args[0].toLowerCase();
             String partial = args[2].toLowerCase();
 
-            // Notes subcommands: add, remove, clear, list
+
             if (subCommand.equals("notes")) {
                 List<String> noteSubCommands = Arrays.asList("add", "remove", "clear", "list");
                 for (String noteCmd : noteSubCommands) {
@@ -185,7 +185,7 @@ public class ApexCommand implements CommandExecutor, TabCompleter {
                     }
                 }
             }
-            // Xray subcommands: info, clear
+
             else if (subCommand.equals("xray")) {
                 List<String> xraySubCommands = Arrays.asList("info", "clear");
                 for (String xrayCmd : xraySubCommands) {
