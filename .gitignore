@@ -11,9 +11,10 @@ buildNumber.properties
 .mvn/wrapper/maven-wrapper.jar
 
 # Eclipse
-.settings/
+/.settings
 .classpath
 .project
+.factorypath
 bin/
 *.class
 
@@ -43,12 +44,15 @@ nms/
 craftbukkit/
 spigot/
 paper/
-
 # Documentation
 description.md
 documentation.md
 description.txt
 documentation.txt
+
+# Text files
+*.txt
+
 
 # Ideas
 IDEAS.txt
