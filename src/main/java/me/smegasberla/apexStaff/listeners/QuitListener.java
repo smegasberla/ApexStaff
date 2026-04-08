@@ -2,10 +2,7 @@ package me.smegasberla.apexStaff.listeners;
 
 import me.smegasberla.apexStaff.ApexStaff;
 import me.smegasberla.apexStaff.commands.FreezeCommand;
-import me.smegasberla.apexStaff.managers.DatabaseManager;
-import me.smegasberla.apexStaff.managers.DupeIPManager;
-import me.smegasberla.apexStaff.managers.FreezeManager;
-import me.smegasberla.apexStaff.managers.XRayCheckManager;
+import me.smegasberla.apexStaff.managers.*;
 import me.smegasberla.apexStaff.models.FreezeModel;
 import me.smegasberla.apexStaff.utils.MessageUtils;
 import me.smegasberla.apexStaff.utils.TimeUtils;
@@ -25,12 +22,14 @@ public class QuitListener implements Listener {
     private final DatabaseManager databaseManager;
     private final XRayCheckManager xRayCheckManager;
     private final DupeIPManager dupeIPManager;
+    private final StaffChatManager staffChatManager;
 
-    public QuitListener(ApexStaff plugin, DatabaseManager databaseManager, XRayCheckManager xRayCheckManager, DupeIPManager dupeIPManager) {
+    public QuitListener(ApexStaff plugin, DatabaseManager databaseManager, XRayCheckManager xRayCheckManager, DupeIPManager dupeIPManager, StaffChatManager staffChatManager) {
         this.plugin = plugin;
         this.databaseManager = databaseManager;
         this.xRayCheckManager = xRayCheckManager;
         this.dupeIPManager = dupeIPManager;
+        this.staffChatManager = staffChatManager;
     }
 
     @EventHandler
@@ -47,6 +46,12 @@ public class QuitListener implements Listener {
         boolean enabled = plugin.getConfig().getBoolean("notes.alert-for-noted-players.enabled");
         boolean alertOnQuit = plugin.getConfig().getBoolean("notes.alert-for-noted-players.alert-on-quit");
         boolean alertOnAltQuit = plugin.getConfig().getBoolean("notes.alert-for-noted-players.alert-on-alt-quit");
+
+        if(staffChatManager.isInStaffChat.contains(targetUUID)) {
+
+            staffChatManager.isInStaffChat.remove(targetUUID);
+
+        }
 
         if (enabled && staffUUID != null) {
             Player staff = Bukkit.getPlayer(UUID.fromString(staffUUID));

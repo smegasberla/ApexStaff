@@ -16,7 +16,7 @@ only-players: "&cOnly players can run this command!"
 exempt-message: "&cThe player is exempted from checks!"
 
 # RELOAD MESSAGES:
-successfully-reloaded: "&aYou have successfully reloaded the plugin!"
+successfully-reloaded: "&aYou have successfully reloaded the plugin and exstensions!"
 
 # VANISH MESSAGES:
 vanish-message: "&aYou have successfully vanished!"
@@ -159,6 +159,19 @@ alt-join-notes-alert: "&8[&e#Notes&8] &6An alt of &b{target} &6has joined! &7Alt
 quit-notes-alert: "&8[&e#Notes&8] &b{target} &7has quitted the server! &8(&7Total notes: &e{number_of_notes}&8)"
 alt-quit-notes-alert: "&8[&e#Notes&8] &6An alt of &b{target} &6has quitted! &7Alt: &f{alt} &8(&7Total notes on {alt}: &e{number_of_notes}&7)"
 xray-check-alert: "&8[&e#Notes&8] &b{target} &7is suspected of &cX-Ray&7! &8(&7Notes: &e{number_of_notes}&8)"
+
+# STAFF CHAT MESSAGES
+entered-staff-chat: "&aYou have entered staff chat"
+exited-staff-chat: "&cYou have exited staff chat"
+
+# EXSTENSION MESSAGES
+exstensions:
+  none-loaded: "&cNo exstensions loaded."
+  reloaded: "&aExstensions reloaded!"
+  not-found: "&cExstension not found."
+  list-header: "&8--- &6Exstensions &8(&e{count}&8) &6---"
+  info-header: "&8--- &6{name} Info &8---"
+  help-header: "&8--- &6Exstension Help &8---"
 
 #OPTIONS:
 freeze:

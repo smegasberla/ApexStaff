@@ -17,5 +17,8 @@ public class ApexStaffLoader implements PluginLoader {
         resolver.addDependency(new Dependency(new DefaultArtifact("com.github.retrooper:packetevents-spigot:2.11.2"), null));
 
         classpathBuilder.addLibrary(resolver);
+
+        
+
     }
 }

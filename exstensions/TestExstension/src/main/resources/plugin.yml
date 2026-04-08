@@ -1,0 +1,23 @@
+name: TestExstension
+version: '1.0.0'
+main: me.smegasberla.testexstension.TestExstension
+api-version: '1.21'
+description: Test extension for ApexStaff Exstension system
+author: smegasberla
+
+commands:
+  testext:
+    description: Main test extension command
+    usage: /<command> [help|info|item|message|task|world|location|scoreboard|gui]
+    aliases: [te]
+  testextinfo:
+    description: Show test extension info
+    usage: /<command>
+
+permissions:
+  testexstension.admin:
+    description: Admin access for TestExstension
+    default: op
+  testexstension.use:
+    description: Use TestExstension features
+    default: true

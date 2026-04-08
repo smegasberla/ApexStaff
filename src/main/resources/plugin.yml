@@ -1,5 +1,5 @@
 name: ApexStaff
-version: '1.3'
+version: '1.4'
 main: me.smegasberla.apexStaff.ApexStaff
 paper-plugin-loader: me.smegasberla.apexStaff.ApexStaffLoader
 api-version: '1.21'
@@ -34,6 +34,8 @@ permissions:
       apexstaff.ping: true
       apexstaff.shadowcam: true
       apexstaff.notes: true
+      apexstaff.staffchat: true
+      apexstaff.exstension: true
 
   apexstaff.admin:
     description: Access ApexStaff main command
@@ -70,4 +72,10 @@ permissions:
     default: op
   apexstaff.notes:
     description: Access /apexstaff notes {player} command
+    default: op
+  apexstaff.staffchat:
+    description: Access /apexstaff staffchat command
+    default: op
+  apexstaff.exstension:
+    description: Access /apexstaff exstension command
     default: op

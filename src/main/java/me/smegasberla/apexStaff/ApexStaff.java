@@ -30,6 +30,7 @@ public final class ApexStaff extends JavaPlugin {
   private VanishManager vanishManager = new VanishManager();
   private FreezeManager freezeManager = new FreezeManager();
   private PlaceholderManager placeholderManager = new PlaceholderManager(this, vanishManager);
+  private StaffChatManager staffChatManager = new StaffChatManager(plugin);
   private PlaceholderAPIHook papiHook;
 
   @Override
@@ -60,6 +61,7 @@ public final class ApexStaff extends JavaPlugin {
     this.shadowCamManager = new ShadowCamManager();
     this.freezeManager = new FreezeManager();
     this.vanishManager = new VanishManager();
+    this.staffChatManager = new StaffChatManager(plugin);
     this.placeholderManager = new PlaceholderManager(this, vanishManager);
 
     getConfig().options().copyDefaults(true);
@@ -67,13 +69,12 @@ public final class ApexStaff extends JavaPlugin {
 
     PacketEvents.getAPI().init();
 
-    getCommand("apexstaff").setExecutor(new ApexCommand(sharedManager, flyManager, databaseManager, shadowCamManager));
+    getCommand("apexstaff").setExecutor(new ApexCommand(sharedManager, flyManager, databaseManager, shadowCamManager, staffChatManager));
 
     getServer().getPluginManager().registerEvents(new MovementListener(this), this);
     getServer().getPluginManager().registerEvents(new DamageListener(this), this);
     getServer().getPluginManager().registerEvents(new ChatListener(this), this);
-    getServer().getPluginManager().registerEvents(new QuitListener(this, databaseManager, sharedManager, dupeIPManager),
-        this);
+    getServer().getPluginManager().registerEvents(new QuitListener(this, databaseManager, sharedManager,dupeIPManager,staffChatManager),this);
     getServer().getPluginManager().registerEvents(new AsyncPreLoginListener(this, databaseManager, sharedManager),
         this);
     getServer().getPluginManager().registerEvents(new BlockBreakListener(this, databaseManager,sharedManager), this);
