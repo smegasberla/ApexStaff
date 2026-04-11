@@ -15,6 +15,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.File;
 import java.util.UUID;
 
 import static me.smegasberla.apexStaff.managers.DatabaseManager.addXrayData;
@@ -51,6 +52,8 @@ public final class ApexStaff extends JavaPlugin {
 
     plugin = this;
 
+    setupFolders();
+
     this.papiHook = new PlaceholderAPIHook(this);
     this.papiHook.registerHook();
 
@@ -62,7 +65,7 @@ public final class ApexStaff extends JavaPlugin {
     this.freezeManager = new FreezeManager();
     this.vanishManager = new VanishManager();
     this.staffChatManager = new StaffChatManager(plugin);
-    this.placeholderManager = new PlaceholderManager(this, vanishManager);
+    this.placeholderManager = new PlaceholderManager(this, vanishManager); 
 
     getConfig().options().copyDefaults(true);
     saveDefaultConfig();
@@ -79,6 +82,8 @@ public final class ApexStaff extends JavaPlugin {
         this);
     getServer().getPluginManager().registerEvents(new BlockBreakListener(this, databaseManager,sharedManager), this);
     getServer().getPluginManager().registerEvents(new JoinListener(this,this, dupeIPManager, databaseManager), this);
+    getServer().getPluginManager().registerEvents(new ChatMessageListener(staffChatManager), this);
+    getServer().getPluginManager().registerEvents(new MobListener(vanishManager), this);
 
     PacketEvents.getAPI().getEventManager().registerListener(new ShadowCamListener(this, shadowCamManager),
         PacketListenerPriority.NORMAL);
@@ -202,6 +207,26 @@ public final class ApexStaff extends JavaPlugin {
 
     }, 20L * 60 * 5, 20L * 60 * 5);
 
+  }
+
+  public void setupFolders() {
+    getPlugin().getLogger().info("DEBUG: setupFolders() has started...");
+
+    File dataFolder = getPlugin().getDataFolder();
+    if (dataFolder == null) {
+      getPlugin().getLogger().severe("DEBUG: getDataFolder() is NULL!");
+      return;
+    }
+
+    File extensionFolder = new File(dataFolder, "exstensions");
+
+    if (extensionFolder.exists()) {
+      getPlugin().getLogger().info("DEBUG: Folder already exists. No action taken.");
+    } else {
+      getPlugin().getLogger().info("DEBUG: Folder does not exist. Attempting to create...");
+      boolean success = extensionFolder.mkdirs();
+      getPlugin().getLogger().info("DEBUG: Creation result: " + success);
+    }
   }
 
 

@@ -126,7 +126,7 @@ public class ApexCommand implements CommandExecutor, TabCompleter {
                 break;
 
             case "staffchat":
-                if (sender.hasPermission("apexstaff.notes")) { // Note: Check if permission should be .staffchat
+                if (sender.hasPermission("apexstaff.staffchat")) { // Note: Check if permission should be .staffchat
                     new StaffChatCommand(plugin, staffChatManager).onCommand(sender, command, label, subArgs);
                 } else {
                     sender.sendMessage(noPermission);
