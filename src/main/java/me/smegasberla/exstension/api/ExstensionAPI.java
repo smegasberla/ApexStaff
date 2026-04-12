@@ -147,18 +147,18 @@ private me.smegasberla.exstension.api.manager.PlaceholderManager placeholderMana
         return updateManager;
     }
 
-public DatabaseManager getDatabaseManager(String host, String database, String username, String password) {
-return new DatabaseManager(host, database, username, password);
-}
+    public DatabaseManager getDatabaseManager(String host, String database, String username, String password) {
+        return new DatabaseManager(host, database, username, password);
+    }
 
-public me.smegasberla.exstension.api.manager.PlaceholderManager getPlaceholderManager() {
-if (placeholderManager == null) {
-placeholderManager = new me.smegasberla.exstension.api.manager.PlaceholderManager(plugin);
-}
-return placeholderManager;
-}
+    public me.smegasberla.exstension.api.manager.PlaceholderManager getPlaceholderManager() {
+        if (placeholderManager == null) {
+            placeholderManager = new me.smegasberla.exstension.api.manager.PlaceholderManager(plugin);
+        }
+        return placeholderManager;
+    }
 
-public JavaPlugin getPlugin() {
-return plugin;
-}
+    public JavaPlugin getPlugin() {
+        return plugin;
+    }
 }

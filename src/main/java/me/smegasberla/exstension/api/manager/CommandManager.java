@@ -15,23 +15,23 @@ import java.util.Map;
 
 public class CommandManager {
 
-private final JavaPlugin plugin;
-private final Map<String, DynamicCommand> registeredCommands;
-private CommandMap commandMap;
+    private final JavaPlugin plugin;
+    private final Map<String, DynamicCommand> registeredCommands;
+    private CommandMap commandMap;
 
 public CommandManager(JavaPlugin plugin) {
-this.plugin = plugin;
-this.registeredCommands = new HashMap<>();
-try {
-Field field = Bukkit.getServer().getClass().getDeclaredField("commandMap");
-field.setAccessible(true);
-commandMap = (CommandMap) field.get(Bukkit.getServer());
-} catch (Exception e) {
-e.printStackTrace();
-}
-}
+        this.plugin = plugin;
+        this.registeredCommands = new HashMap<>();
+        try {
+            Field field = Bukkit.getServer().getClass().getDeclaredField("commandMap");
+            field.setAccessible(true);
+            commandMap = (CommandMap) field.get(Bukkit.getServer());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
-    public boolean registerCommand(String name, CommandExecutor executor) {
+public boolean registerCommand(String name, CommandExecutor executor) {
         return registerCommand(name, executor, "Extension command", "/" + name, null, null);
     }
 
@@ -52,10 +52,10 @@ e.printStackTrace();
                 command.setPermission(permission);
             }
 
-commandMap.register(name, command);
-registeredCommands.put(name, command);
+            commandMap.register(name, command);
+            registeredCommands.put(name, command);
 
-return true;
+            return true;
         } catch (Exception e) {
             e.printStackTrace();
             return false;
@@ -63,22 +63,22 @@ return true;
     }
 
 public boolean unregisterCommand(String name) {
-if (commandMap == null) {
-return false;
-}
+        if (commandMap == null) {
+            return false;
+        }
 
-try {
-Command command = registeredCommands.get(name);
-if (command != null) {
-command.unregister(commandMap);
-}
+        try {
+            Command command = registeredCommands.get(name);
+            if (command != null) {
+                command.unregister(commandMap);
+            }
 
-return registeredCommands.remove(name) != null;
-} catch (Exception e) {
-e.printStackTrace();
-return false;
-}
-}
+            return registeredCommands.remove(name) != null;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 
     public CommandExecutor getCommandExecutor(String name) {
         DynamicCommand command = registeredCommands.get(name);
@@ -101,22 +101,22 @@ return false;
     }
 
 private static class DynamicCommand extends Command {
-private CommandExecutor executor;
-private TabCompleter tabCompleter;
-private final JavaPlugin plugin;
+    private CommandExecutor executor;
+    private TabCompleter tabCompleter;
+    private final JavaPlugin plugin;
 
-public DynamicCommand(String name, JavaPlugin plugin) {
-super(name, "Extension command", "/" + name, new ArrayList<>());
-this.executor = null;
-this.tabCompleter = null;
-this.plugin = plugin;
-this.setPermission("apexstaff.admin");
-}
+    public DynamicCommand(String name, JavaPlugin plugin) {
+        super(name, "Extension command", "/" + name, new ArrayList<>());
+        this.executor = null;
+        this.tabCompleter = null;
+        this.plugin = plugin;
+        this.setPermission("apexstaff.admin");
+    }
 
-@Override
-public List<String> getAliases() {
-return new ArrayList<>();
-}
+    @Override
+    public List<String> getAliases() {
+        return new ArrayList<>();
+    }
 
         @Override
         public boolean execute(org.bukkit.command.CommandSender sender, String commandLabel, String[] args) {

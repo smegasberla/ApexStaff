@@ -116,21 +116,21 @@ public abstract class Exstension implements ApexStaffExstension {
         return api.getUpdateManager(resourceId, version);
     }
 
-public DatabaseManager getDatabaseManager(String host, String database, String username, String password) {
-return api.getDatabaseManager(host, database, username, password);
-}
+    public DatabaseManager getDatabaseManager(String host, String database, String username, String password) {
+        return api.getDatabaseManager(host, database, username, password);
+    }
 
-public me.smegasberla.exstension.api.manager.PlaceholderManager getPlaceholderManager() {
-return api.getPlaceholderManager();
-}
+    public me.smegasberla.exstension.api.manager.PlaceholderManager getPlaceholderManager() {
+        return api.getPlaceholderManager();
+    }   
 
     protected ExstensionLogger getLogger() {
         return logger;
     }
 
-public File getDataFolder() {
-return dataFolder;
-}
+    public File getDataFolder() {
+        return dataFolder;
+    }
 
     protected File getFile() {
         return file;

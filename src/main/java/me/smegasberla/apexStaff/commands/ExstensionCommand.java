@@ -58,78 +58,78 @@ public class ExstensionCommand implements CommandExecutor, TabCompleter {
     }
 
 private void listExstensions(CommandSender sender) {
-var manager = ExstensionLoader.getInstance();
-if (manager == null) {
-sendMessage(sender, "exstensions.none-loaded", "&cNo exstensions loaded.");
-return;
-}
-
-var exstensions = manager.getLoadedExstensions();
-if (exstensions.isEmpty()) {
-sendMessage(sender, "exstensions.none-loaded", "&cNo exstensions loaded.");
-return;
-}
-
-String header = getPlainMessage("exstensions.list-header", "&8--- &6Exstensions &8(&e{count}&8) &6---");
-header = header.replace("{count}", String.valueOf(exstensions.size()));
-sender.sendMessage(header);
-for (ExstensionWrapper wrapper : exstensions) {
-String message = ChatColor.translateAlternateColorCodes('&', "&e" + wrapper.getName() + " &7v" + wrapper.getVersion());
-sender.sendMessage(message);
-}
-}
-
-    private void reloadExstensions(CommandSender sender) {
-        ExstensionLoader.disableAll();
-        ExstensionLoader.load(plugin);
-        ExstensionLoader.enableAll(plugin);
-        sendMessage(sender, "exstensions.reloaded", "&aExstensions reloaded!");
+    var manager = ExstensionLoader.getInstance();
+    if (manager == null) {
+        sendMessage(sender, "exstensions.none-loaded", "&cNo exstensions loaded.");
+        return;
     }
 
+    var exstensions = manager.getLoadedExstensions();
+    if (exstensions.isEmpty()) {
+        sendMessage(sender, "exstensions.none-loaded", "&cNo exstensions loaded.");
+        return;
+    }
+
+    String header = getPlainMessage("exstensions.list-header", "&8--- &6Exstensions &8(&e{count}&8) &6---");
+    header = header.replace("{count}", String.valueOf(exstensions.size()));
+    sender.sendMessage(header);
+    for (ExstensionWrapper wrapper : exstensions) {
+        String message = ChatColor.translateAlternateColorCodes('&', "&e" + wrapper.getName() + " &7v" + wrapper.getVersion());
+        sender.sendMessage(message);
+    }
+}
+
+private void reloadExstensions(CommandSender sender) {
+    ExstensionLoader.disableAll();
+    ExstensionLoader.load(plugin);
+    ExstensionLoader.enableAll(plugin);
+    sendMessage(sender, "exstensions.reloaded", "&aExstensions reloaded!");
+}
+
 private void showInfo(CommandSender sender, String[] args) {
-if (args.length == 0) {
-sendHelp(sender);
-return;
-}
+    if (args.length == 0) {
+        sendHelp(sender);
+        return;
+    }
 
-String name = args[0];
-var manager = ExstensionLoader.getInstance();
-if (manager == null) {
-sendMessage(sender, "exstensions.not-found", "&cExstension not found.");
-return;
-}
+    String name = args[0];
+    var manager = ExstensionLoader.getInstance();
+    if (manager == null) {
+        sendMessage(sender, "exstensions.not-found", "&cExstension not found.");
+        return;
+    }
 
-var wrapper = manager.getExstensionByName(name);
-if (wrapper == null) {
-sendMessage(sender, "exstensions.not-found", "&cExstension '" + name + "' not found.");
-return;
-}
+    var wrapper = manager.getExstensionByName(name);
+    if (wrapper == null) {
+        sendMessage(sender, "exstensions.not-found", "&cExstension '" + name + "' not found.");
+        return;
+    }
 
-String header = getPlainMessage("exstensions.info-header", "&8--- &6{name} Info &8---");
-header = header.replace("{name}", name);
-sender.sendMessage(header);
-sender.sendMessage(ChatColor.GOLD + "Name: " + ChatColor.YELLOW + wrapper.getName());
-sender.sendMessage(ChatColor.GOLD + "Version: " + ChatColor.YELLOW + wrapper.getVersion());
-sender.sendMessage(ChatColor.GOLD + "Main Class: " + ChatColor.YELLOW + wrapper.getMainClass());
-sender.sendMessage(ChatColor.GOLD + "File: " + ChatColor.YELLOW + wrapper.getFile().getName());
+    String header = getPlainMessage("exstensions.info-header", "&8--- &6{name} Info &8---");
+    header = header.replace("{name}", name);
+    sender.sendMessage(header);
+    sender.sendMessage(ChatColor.GOLD + "Name: " + ChatColor.YELLOW + wrapper.getName());
+    sender.sendMessage(ChatColor.GOLD + "Version: " + ChatColor.YELLOW + wrapper.getVersion());
+    sender.sendMessage(ChatColor.GOLD + "Main Class: " + ChatColor.YELLOW + wrapper.getMainClass());
+    sender.sendMessage(ChatColor.GOLD + "File: " + ChatColor.YELLOW + wrapper.getFile().getName());
 }
 
 private void sendHelp(CommandSender sender) {
-String header = getPlainMessage("exstensions.help-header", "&8--- &6Exstension Help &8---");
-sender.sendMessage(header);
-sender.sendMessage(ChatColor.YELLOW + "/apexstaff exstension list &7- List all exstensions");
-sender.sendMessage(ChatColor.YELLOW + "/apexstaff exstension reload &7- Reload all exstensions");
-sender.sendMessage(ChatColor.YELLOW + "/apexstaff exstension info <name> &7- Show info about an exstension");
+    String header = getPlainMessage("exstensions.help-header", "&8--- &6Exstension Help &8---");
+    sender.sendMessage(header);
+    sender.sendMessage(ChatColor.YELLOW + "/apexstaff exstension list &7- List all exstensions");
+    sender.sendMessage(ChatColor.YELLOW + "/apexstaff exstension reload &7- Reload all exstensions");
+    sender.sendMessage(ChatColor.YELLOW + "/apexstaff exstension info <name> &7- Show info about an exstension");
 }
 
 private void sendMessage(CommandSender sender, String path, String defaultMessage) {
-String message = plugin.getConfig().getString("messages." + path, defaultMessage);
-sender.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
+    String message = plugin.getConfig().getString("messages." + path, defaultMessage);
+    sender.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
 }
 
 private String getPlainMessage(String path, String defaultMessage) {
-String message = plugin.getConfig().getString("messages." + path, defaultMessage);
-return ChatColor.translateAlternateColorCodes('&', message);
+    String message = plugin.getConfig().getString("messages." + path, defaultMessage);
+    return ChatColor.translateAlternateColorCodes('&', message);
 }
 
     @Override

@@ -147,6 +147,8 @@ public class ApexCommand implements CommandExecutor, TabCompleter {
         }
 
         return true;
+
+        
     }
 
     @Override
