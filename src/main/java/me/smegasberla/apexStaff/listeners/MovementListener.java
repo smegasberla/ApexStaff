@@ -1,6 +1,7 @@
 package me.smegasberla.apexStaff.listeners;
 
 import me.smegasberla.apexStaff.ApexStaff;
+import me.smegasberla.apexStaff.engine.prediction.PredictionEngine;
 import me.smegasberla.apexStaff.managers.FreezeManager;
 import me.smegasberla.apexStaff.utils.MessageUtils;
 import org.bukkit.entity.Player;
@@ -13,9 +14,11 @@ import java.util.UUID;
 public class MovementListener implements Listener {
 
     private final ApexStaff plugin;
+    private final PredictionEngine predictionEngine;
 
-    public MovementListener(ApexStaff plugin) {
+    public MovementListener(ApexStaff plugin, PredictionEngine predictionEngine) {
         this.plugin = plugin;
+        this.predictionEngine = predictionEngine;
     }
 
     @EventHandler

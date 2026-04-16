@@ -16,7 +16,10 @@ public class MessageUtils {
     public static String censorIPs(String message) {
         if (message == null || message.isEmpty()) return message;
         Matcher matcher = IP_PATTERN.matcher(message);
-        return matcher.replaceAll("***.***.***.***");
+        return matcher.replaceAll(match -> {
+            String[] parts = match.group().split("\\.");
+            return parts[0] + "." + parts[1] + ".***.***";
+        });
     }
 
     public static boolean containsIP(String message) {

@@ -4,6 +4,7 @@ import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.event.PacketListenerPriority;
 import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
 import me.smegasberla.apexStaff.commands.ApexCommand;
+import me.smegasberla.apexStaff.engine.prediction.PredictionEngine;
 import me.smegasberla.apexStaff.hook.PlaceholderAPIHook;
 import me.smegasberla.apexStaff.listeners.*;
 import me.smegasberla.apexStaff.listeners.packet.ShadowCamListener;
@@ -32,6 +33,8 @@ public final class ApexStaff extends JavaPlugin {
   private FreezeManager freezeManager = new FreezeManager();
   private PlaceholderManager placeholderManager = new PlaceholderManager(this, vanishManager);
   private StaffChatManager staffChatManager = new StaffChatManager(plugin);
+  private PredictionEngine predictionEngine = new PredictionEngine();
+  private StatusManager statusManager = new StatusManager(databaseManager, this);
   private PlaceholderAPIHook papiHook;
 
   @Override
@@ -66,16 +69,18 @@ public final class ApexStaff extends JavaPlugin {
     this.vanishManager = new VanishManager();
     this.staffChatManager = new StaffChatManager(plugin);
     this.placeholderManager = new PlaceholderManager(this, vanishManager); 
+    this.predictionEngine = new PredictionEngine();
+    this.statusManager = new StatusManager(databaseManager, this);
 
     getConfig().options().copyDefaults(true);
     saveDefaultConfig();
 
     PacketEvents.getAPI().init();
 
-    getCommand("apexstaff").setExecutor(new ApexCommand(sharedManager, flyManager, databaseManager, shadowCamManager, staffChatManager));
+    getCommand("apexstaff").setExecutor(new ApexCommand(sharedManager, flyManager, databaseManager, shadowCamManager, staffChatManager, statusManager));
 
-    getServer().getPluginManager().registerEvents(new MovementListener(this), this);
-    getServer().getPluginManager().registerEvents(new DamageListener(this), this);
+    getServer().getPluginManager().registerEvents(new MovementListener(this, predictionEngine), this);
+    getServer().getPluginManager().registerEvents(new DamageListener(this, predictionEngine), this);
     getServer().getPluginManager().registerEvents(new ChatListener(this), this);
     getServer().getPluginManager().registerEvents(new QuitListener(this, databaseManager, sharedManager,dupeIPManager,staffChatManager),this);
     getServer().getPluginManager().registerEvents(new AsyncPreLoginListener(this, databaseManager, sharedManager),

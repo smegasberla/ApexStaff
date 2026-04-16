@@ -1,6 +1,7 @@
 package me.smegasberla.apexStaff.listeners;
 
 import me.smegasberla.apexStaff.ApexStaff;
+import me.smegasberla.apexStaff.engine.prediction.PredictionEngine;
 import me.smegasberla.apexStaff.managers.FreezeManager;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -14,9 +15,11 @@ import java.util.UUID;
 public class DamageListener implements Listener {
 
     private final ApexStaff plugin;
+    private final PredictionEngine predictionEngine;
 
-    public DamageListener(ApexStaff plugin) {
+    public DamageListener(ApexStaff plugin, PredictionEngine predictionEngine) {
         this.plugin = plugin;
+        this.predictionEngine = predictionEngine;
     }
 
     @EventHandler
@@ -24,6 +27,7 @@ public class DamageListener implements Listener {
 
         Entity damager = e.getDamager();
         Entity victim = e.getEntity();
+
 
         boolean damageBoolean = plugin.getConfig().getBoolean("freeze.block-damage");
 

@@ -21,13 +21,15 @@ public class ApexCommand implements CommandExecutor, TabCompleter {
     private final DatabaseManager databaseManager;
     private final ShadowCamManager shadowCamManager;
     private final StaffChatManager staffChatManager;
+    private final StatusManager statusManager;
 
-    public ApexCommand(XRayCheckManager manager, FlyManager flyManager, DatabaseManager databaseManager, ShadowCamManager shadowCamManager, StaffChatManager staffChatManager) {
+    public ApexCommand(XRayCheckManager manager, FlyManager flyManager, DatabaseManager databaseManager, ShadowCamManager shadowCamManager, StaffChatManager staffChatManager, StatusManager statusManager) {
         this.manager = manager;
         this.flyManager = flyManager;
         this.databaseManager = databaseManager;
         this.shadowCamManager = shadowCamManager;
         this.staffChatManager = staffChatManager;
+        this.statusManager = statusManager;
     }
 
     @Override
@@ -141,6 +143,14 @@ public class ApexCommand implements CommandExecutor, TabCompleter {
                 }
                 break;
 
+            case "status":
+                if (sender.hasPermission("apexstaff.status")) {
+                    new StatusCommand(plugin, databaseManager, statusManager).onCommand(sender, command, label, subArgs);
+                } else {
+                    sender.sendMessage(noPermission);
+                }
+                break;
+
             default:
                 plugin.sendHelpMessage(sender);
                 break;
@@ -158,7 +168,7 @@ public class ApexCommand implements CommandExecutor, TabCompleter {
         if (args.length == 1) {
             List<String> subCommands = Arrays.asList(
                     "reload", "vanish", "freeze", "xray", "fly", "clearchat",
-                    "dupeip", "ping", "shadowcam", "notes", "staffchat", "exstension"
+                    "dupeip", "ping", "shadowcam", "notes", "staffchat", "exstension", "status"
             );
 
             String partial = args[0].toLowerCase();
@@ -171,7 +181,7 @@ public class ApexCommand implements CommandExecutor, TabCompleter {
             String subCommand = args[0].toLowerCase();
             String partial = args[1].toLowerCase();
 
-            List<String> playerCommands = Arrays.asList("vanish", "freeze", "xray", "fly", "clearchat", "dupeip", "ping", "shadowcam", "notes", "exstension");
+            List<String> playerCommands = Arrays.asList("vanish", "freeze", "xray", "fly", "clearchat", "dupeip", "ping", "shadowcam", "notes", "exstension", "status");
 
             if (playerCommands.contains(subCommand)) {
                 for (Player onlinePlayer : org.bukkit.Bukkit.getOnlinePlayers()) {

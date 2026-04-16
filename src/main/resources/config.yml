@@ -8,6 +8,15 @@
 #             ▀▀
  
 
+
+# LEGENDA:
+# int: Integer numbers
+# double: Decimal Numbers
+# string: Phrases included into quotation marks (" ").
+
+
+# WARN: Do not by any means add other placeholders that aren't already present in the messages.
+
 # GENERAL MESSAGES:
 player-offline: "&c{target} is currently offline or doesen't exist!"
 wrong-arguments: "&cYou typed the wrong amount of arguments!"
@@ -173,6 +182,30 @@ exstensions:
   info-header: "&8--- &6{name} Info &8---"
   help-header: "&8--- &6Exstension Help &8---"
 
+
+# Regarding the version in this message, if 2 versions have the same packet id, the will have the same version number.
+# For example 1.21.8 and 1.21.7 both show 1.21.7 since they have same Protocol ID. Its aa PacketEvents limitation.
+status-message: |
+  &8&m--------------------------------------------------
+  &6&l» &e&lPLAYER STATUS: &f{target}
+  
+  &b&l[BASIC INFO]
+  &f• &7Health: &c{health}
+  &7• Food: &6{food}
+  &f• &7Ping: &f{ping}ms
+  &7• Version: &f{version} 
+  
+  &b&l[LOCATION & SESSION]
+  &f• &7World: &f{world}
+  &f• &7Coordinates: &f{coords}
+  &f• &7First time joined: &f{first_joined}
+
+  &b&l[STAFF UTILS]
+  &f• &7UUID: &f{uuid}
+  &f• &7IP Address: &f{ip}
+  &f• &7Linked Accounts: &f{alt_number}
+
+
 #OPTIONS:
 freeze:
   # Block a player to write messages in chat while freezed
@@ -274,3 +307,15 @@ notes:
     #Minimum amount of notes that a player has to have to get alerted
     min-notes-threshold: 1
 
+prediction:
+
+  flight:
+    #Minimum Y height to start getting detected as fly hack(if internal conditions are met), must be a double value
+    min-y: 75.0
+    #Minimum "Flight Points" before adding 1 suspicion point, Integer value
+    flight-points: 5
+
+  speed:
+    # Minimum double value to get detected for speed hack check(A normal player running does 5.6 blocks per second). Speed effect is ignored by the plugin.
+    # Don't put this value under 8.2, if you do false positives are expected
+    min-speed-val: 8.2
