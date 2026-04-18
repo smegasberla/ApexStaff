@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.UUID;
 
 public class ShadowCamManager {
@@ -17,6 +18,7 @@ public class ShadowCamManager {
     public HashMap<UUID, Integer> cameraIDHash = new HashMap<>();
     public HashMap<UUID, Location> originalLocationMap = new HashMap<>();
     public HashSet<UUID> isASpectator = new HashSet<>();
+    public HashMap<UUID, UUID> targetSpectator = new HashMap<>();
 
 
     public void startShadowCam(UUID spectatorUUID, UUID targetUUID) {
@@ -43,6 +45,8 @@ public class ShadowCamManager {
 
         spectatorUser.sendPacket(position);
         spectatorUser.sendPacket(camera);
+
+        targetSpectator.put(targetUUID, spectatorUUID);
     }
 
     public void stopShadowCam(UUID spectatorUUID) {
@@ -53,6 +57,14 @@ public class ShadowCamManager {
 
         isASpectator.remove(spectatorUUID);
 
+        UUID targetUUID = null;
+
+        for (Map.Entry<UUID, UUID> entry : targetSpectator.entrySet()) {
+            if (entry.getValue().equals(spectatorUUID)) {
+                targetUUID = entry.getKey();
+                break;
+            }
+        }
 
         int spectatorEntityId = spectator.getEntityId();
         WrapperPlayServerCamera resetCamera = new WrapperPlayServerCamera(spectatorEntityId);
@@ -68,6 +80,14 @@ public class ShadowCamManager {
 
 
         cameraIDHash.remove(spectatorUUID);
+        if(targetUUID == null) return;
+        targetSpectator.remove(targetUUID);
+
+    }
+
+    public UUID getSpectator(UUID targetUUID) {
+
+        return targetSpectator.get(targetUUID);
 
     }
 
