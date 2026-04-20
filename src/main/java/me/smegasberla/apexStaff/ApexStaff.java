@@ -79,7 +79,7 @@ public final class ApexStaff extends JavaPlugin {
 
     getCommand("apexstaff").setExecutor(new ApexCommand(sharedManager, flyManager, databaseManager, shadowCamManager, staffChatManager, statusManager));
 
-    getServer().getPluginManager().registerEvents(new MovementListener(this, predictionEngine), this);
+    getServer().getPluginManager().registerEvents(new MovementListener(this, predictionEngine, statusManager), this);
     getServer().getPluginManager().registerEvents(new DamageListener(this, predictionEngine), this);
     getServer().getPluginManager().registerEvents(new ChatListener(this), this);
     getServer().getPluginManager().registerEvents(new QuitListener(this, databaseManager, sharedManager,dupeIPManager,staffChatManager),this);

@@ -204,8 +204,7 @@ status-message: |
   &f• &7UUID: &f{uuid}
   &f• &7IP Address: &f{ip}
   &f• &7Linked Accounts: &f{alt_number}
-
-
+    
 #OPTIONS:
 freeze:
   # Block a player to write messages in chat while freezed
@@ -307,15 +306,11 @@ notes:
     #Minimum amount of notes that a player has to have to get alerted
     min-notes-threshold: 1
 
-prediction:
-
-  flight:
-    #Minimum Y height to start getting detected as fly hack(if internal conditions are met), must be a double value
-    min-y: 75.0
-    #Minimum "Flight Points" before adding 1 suspicion point, Integer value
-    flight-points: 5
-
-  speed:
-    # Minimum double value to get detected for speed hack check(A normal player running does 5.6 blocks per second). Speed effect is ignored by the plugin.
-    # Don't put this value under 8.2, if you do false positives are expected
-    min-speed-val: 8.2
+overlay:
+  # Check if the option should be enaabled or not
+  enabled: true
+  # Range beetween the player and the target for the overlay to happear, only int values accepted
+  range: 10
+  # Action bar message
+  message: "&6&l» &e&l{target} &8| &7H: &c{health} &8| &7F: &6{food} &8| &7Ping: &f{ping}ms &8| &7Ver: &f{version} &8| &7Pos: &f{world} &8({coords})"
+  

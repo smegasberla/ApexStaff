@@ -1,5 +1,5 @@
 name: ApexStaff
-version: '1.5'
+version: '1.6'
 main: me.smegasberla.apexStaff.ApexStaff
 paper-plugin-loader: me.smegasberla.apexStaff.ApexStaffLoader
 api-version: '1.21'
@@ -37,6 +37,7 @@ permissions:
       apexstaff.staffchat: true
       apexstaff.exstension: true
       apexstaff.status: true
+      apexstaff.overlay: true
 
   apexstaff.admin:
     description: Access ApexStaff main command
@@ -82,4 +83,7 @@ permissions:
     default: op
   apexstaff.status:
     description: Access /apexstaff status {player} command
+    default: op
+  apexstaff.overlay:
+    description: Access the overlay for easy-to-access player info
     default: op
