@@ -3,6 +3,7 @@ package me.smegasberla.apexStaff;
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.event.PacketListenerPriority;
 import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
+import me.clip.placeholderapi.PlaceholderAPI;
 import me.smegasberla.apexStaff.commands.ApexCommand;
 import me.smegasberla.apexStaff.engine.prediction.PredictionEngine;
 import me.smegasberla.apexStaff.hook.PlaceholderAPIHook;
@@ -34,8 +35,8 @@ public final class ApexStaff extends JavaPlugin {
   private PlaceholderManager placeholderManager = new PlaceholderManager(this, vanishManager);
   private StaffChatManager staffChatManager = new StaffChatManager(plugin);
   private PredictionEngine predictionEngine = new PredictionEngine();
-  private StatusManager statusManager = new StatusManager(databaseManager, this);
   private PlaceholderAPIHook papiHook;
+  private StatusManager statusManager = new StatusManager(databaseManager, this, papiHook);
 
   @Override
   public void onLoad() {
@@ -70,7 +71,7 @@ public final class ApexStaff extends JavaPlugin {
     this.staffChatManager = new StaffChatManager(plugin);
     this.placeholderManager = new PlaceholderManager(this, vanishManager); 
     this.predictionEngine = new PredictionEngine();
-    this.statusManager = new StatusManager(databaseManager, this);
+    this.statusManager = new StatusManager(databaseManager, this, papiHook);
 
     getConfig().options().copyDefaults(true);
     saveDefaultConfig();
@@ -233,6 +234,87 @@ public final class ApexStaff extends JavaPlugin {
       getPlugin().getLogger().info("DEBUG: Creation result: " + success);
     }
   }
+
+  public static String formatPlayer(Player player, String message) {
+
+    String world = player.getWorld().getName();
+    String coords = String.format("%.1f X %.1f Y %.1f Z", player.getX(), player.getY(), player.getZ());
+    double health = player.getHealth();
+    int food = player.getFoodLevel();
+
+    if (message == null || message.isEmpty())
+      return "";
+
+    if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+      message = PlaceholderAPI.setPlaceholders(player, message);
+    }
+
+    if (message.contains("{online_staff}")) {
+      long count = Bukkit.getOnlinePlayers().stream()
+          .filter(p -> p.hasPermission("apexstaff.admin"))
+          .count();
+      message = message.replace("{online_staff}", String.valueOf(count));
+    }
+
+    if (player != null) {
+      message = message.replace("{player}", player.getName())
+          .replace("{displayname}", player.getDisplayName())
+          .replace("{uuid}", player.getUniqueId().toString())
+          .replace("{ip}", player.getAddress().getHostString())
+          .replace("{ping}", String.valueOf(player.getPing()))
+          .replace("{coords}", coords)
+          .replace("{player}", player.getName())
+          .replace("{world}", world)
+          .replace("{health}", String.valueOf(health))
+          .replace("{food}", String.valueOf(food));
+
+    }
+
+    message = message.replace("{prefix}", "§8[§bApex§8] ");
+
+    return ChatColor.translateAlternateColorCodes('&', message);
+  }
+
+  public static String formatTarget(Player target, String message) {
+
+    String world = target.getWorld().getName();
+    String coords = String.format("%.1f X %.1f Y %.1f Z", target.getX(), target.getY(), target.getZ());
+    double health = target.getHealth();
+    int food = target.getFoodLevel();
+
+    if (message == null || message.isEmpty())
+      return "";
+
+    if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+      message = PlaceholderAPI.setPlaceholders(target, message);
+    }
+
+    if (message.contains("{online_staff}")) {
+      long count = Bukkit.getOnlinePlayers().stream()
+          .filter(p -> p.hasPermission("apexstaff.admin"))
+          .count();
+      message = message.replace("{online_staff}", String.valueOf(count));
+    }
+
+    if (target != null) {
+      message = message.replace("{target}", target.getName())
+          .replace("{displayname}", target.getDisplayName())
+          .replace("{uuid}", target.getUniqueId().toString())
+          .replace("{ip}", target.getAddress().getHostString())
+          .replace("{ping}", String.valueOf(target.getPing()))
+          .replace("{coords}", coords)
+          .replace("{player}", target.getName())
+          .replace("{world}", world)
+          .replace("{health}", String.valueOf(health))
+          .replace("{food}", String.valueOf(food));
+    }
+
+    message = message.replace("{prefix}", "§8[§bApex§8] ");
+
+    return ChatColor.translateAlternateColorCodes('&', message);
+
+
+  } 
 
 
 }
