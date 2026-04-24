@@ -2,6 +2,8 @@ package me.smegasberla.apexStaff;
 
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.event.PacketListenerPriority;
+
+import com.github.retrooper.packetevents.protocol.player.User;
 import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
 import me.clip.placeholderapi.PlaceholderAPI;
 import me.smegasberla.apexStaff.commands.ApexCommand;
@@ -238,9 +240,14 @@ public final class ApexStaff extends JavaPlugin {
   public static String formatPlayer(Player player, String message) {
 
     String world = player.getWorld().getName();
+
     String coords = String.format("%.1f X %.1f Y %.1f Z", player.getX(), player.getY(), player.getZ());
     double health = player.getHealth();
     int food = player.getFoodLevel();
+
+    User user = PacketEvents.getAPI().getPlayerManager().getUser(player);
+    String version = user.getClientVersion().getReleaseName();
+
 
     if (message == null || message.isEmpty())
       return "";
@@ -266,7 +273,9 @@ public final class ApexStaff extends JavaPlugin {
           .replace("{player}", player.getName())
           .replace("{world}", world)
           .replace("{health}", String.valueOf(health))
-          .replace("{food}", String.valueOf(food));
+          .replace("{food}", String.valueOf(food))
+          .replace("{version}", version);
+
 
     }
 
@@ -281,6 +290,8 @@ public final class ApexStaff extends JavaPlugin {
     String coords = String.format("%.1f X %.1f Y %.1f Z", target.getX(), target.getY(), target.getZ());
     double health = target.getHealth();
     int food = target.getFoodLevel();
+    User user = PacketEvents.getAPI().getPlayerManager().getUser(target);
+    String version = user.getClientVersion().getReleaseName();
 
     if (message == null || message.isEmpty())
       return "";
@@ -306,7 +317,9 @@ public final class ApexStaff extends JavaPlugin {
           .replace("{player}", target.getName())
           .replace("{world}", world)
           .replace("{health}", String.valueOf(health))
-          .replace("{food}", String.valueOf(food));
+          .replace("{food}", String.valueOf(food))
+          .replace("{version}", version);
+
     }
 
     message = message.replace("{prefix}", "§8[§bApex§8] ");
