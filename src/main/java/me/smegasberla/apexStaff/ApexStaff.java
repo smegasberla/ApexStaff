@@ -152,24 +152,34 @@ public final class ApexStaff extends JavaPlugin {
   }
 
   public static void sendHelpMessage(CommandSender sender) {
-   sender.sendMessage(ChatColor.DARK_GRAY + "=================================");
-   sender.sendMessage(ChatColor.GOLD + "        ApexStaff Help Menu");
-   sender.sendMessage(ChatColor.DARK_GRAY + "=================================");
-   sender.sendMessage(ChatColor.YELLOW + "  Moderation:");
-   sender.sendMessage(ChatColor.AQUA + "  /apexstaff freeze <player>" + ChatColor.GRAY + " - Freeze a player");
-   sender.sendMessage(ChatColor.AQUA + "  /apexstaff vanish <player>" + ChatColor.GRAY + " - Toggle vanish mode");
-   sender.sendMessage(ChatColor.AQUA + "  /apexstaff clearchat <player>" + ChatColor.GRAY + " - Clear server chat");
-   sender.sendMessage(ChatColor.YELLOW + "  Utilities:");
-   sender.sendMessage(ChatColor.AQUA + "  /apexstaff fly <player>" + ChatColor.GRAY + " - Toggle flight");
-   sender.sendMessage(ChatColor.AQUA + "  /apexstaff ping <player>" + ChatColor.GRAY + " - Check ping");
-   sender.sendMessage(ChatColor.AQUA + "  /apexstaff shadowcam <player>" + ChatColor.GRAY + " - Toggle shadow cam");
-   sender.sendMessage(ChatColor.AQUA + "  /apexstaff notes <player> [add|list|remove|clear]" + ChatColor.GRAY + " - Manage player notes");
-   sender.sendMessage(ChatColor.YELLOW + "  Detection:");
-   sender.sendMessage(ChatColor.AQUA + "  /apexstaff xray <player> [info|clear]" + ChatColor.GRAY + " - X-Ray checks");
-   sender.sendMessage(ChatColor.AQUA + "  /apexstaff dupeip <player>" + ChatColor.GRAY + " - Check duplicate IPs");
-   sender.sendMessage(ChatColor.YELLOW + "  System:");
-   sender.sendMessage(ChatColor.AQUA + "  /apexstaff reload" + ChatColor.GRAY + " - Reload configuration");
-   sender.sendMessage(ChatColor.DARK_GRAY + "=================================");
+   sender.sendMessage("");
+   sender.sendMessage(ChatColor.DARK_GRAY + "▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬");
+   sender.sendMessage(ChatColor.AQUA + "" + ChatColor.BOLD + "                    ApexStaff " + ChatColor.DARK_GRAY + "» " + ChatColor.GRAY + "Help Menu");
+   sender.sendMessage(ChatColor.DARK_GRAY + "▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬");
+   sender.sendMessage("");
+   sender.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + " ▸ " + ChatColor.YELLOW + "Moderation Commands");
+   sender.sendMessage(ChatColor.DARK_AQUA + "   • " + ChatColor.AQUA + "/apexstaff freeze <player>" + ChatColor.DARK_GRAY + " - " + ChatColor.GRAY + "Freeze a player in place");
+   sender.sendMessage(ChatColor.DARK_AQUA + "   • " + ChatColor.AQUA + "/apexstaff vanish [player]" + ChatColor.DARK_GRAY + " - " + ChatColor.GRAY + "Toggle vanish mode");
+   sender.sendMessage(ChatColor.DARK_AQUA + "   • " + ChatColor.AQUA + "/apexstaff clearchat" + ChatColor.DARK_GRAY + " - " + ChatColor.GRAY + "Clear server chat");
+   sender.sendMessage(ChatColor.DARK_AQUA + "   • " + ChatColor.AQUA + "/apexstaff staffchat [message]" + ChatColor.DARK_GRAY + " - " + ChatColor.GRAY + "Toggle or send staff chat");
+   sender.sendMessage("");
+   sender.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + " ▸ " + ChatColor.YELLOW + "Utility Commands");
+   sender.sendMessage(ChatColor.DARK_AQUA + "   • " + ChatColor.AQUA + "/apexstaff fly [player]" + ChatColor.DARK_GRAY + " - " + ChatColor.GRAY + "Toggle flight mode");
+   sender.sendMessage(ChatColor.DARK_AQUA + "   • " + ChatColor.AQUA + "/apexstaff ping [player]" + ChatColor.DARK_GRAY + " - " + ChatColor.GRAY + "Check player ping");
+   sender.sendMessage(ChatColor.DARK_AQUA + "   • " + ChatColor.AQUA + "/apexstaff shadowcam <player>" + ChatColor.DARK_GRAY + " - " + ChatColor.GRAY + "Spectate player invisibly");
+   sender.sendMessage(ChatColor.DARK_AQUA + "   • " + ChatColor.AQUA + "/apexstaff notes <player> <add|list|remove|clear>" + ChatColor.DARK_GRAY + " - " + ChatColor.GRAY + "Manage player notes");
+   sender.sendMessage(ChatColor.DARK_AQUA + "   • " + ChatColor.AQUA + "/apexstaff status [player]" + ChatColor.DARK_GRAY + " - " + ChatColor.GRAY + "View player status info");
+   sender.sendMessage("");
+   sender.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + " ▸ " + ChatColor.YELLOW + "Detection & Anti-Cheat");
+   sender.sendMessage(ChatColor.DARK_AQUA + "   • " + ChatColor.AQUA + "/apexstaff xray <player> [info|clear]" + ChatColor.DARK_GRAY + " - " + ChatColor.GRAY + "X-Ray detection checks");
+   sender.sendMessage(ChatColor.DARK_AQUA + "   • " + ChatColor.AQUA + "/apexstaff dupeip <player>" + ChatColor.DARK_GRAY + " - " + ChatColor.GRAY + "Check duplicate IP addresses");
+   sender.sendMessage("");
+   sender.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + " ▸ " + ChatColor.YELLOW + "System & Extensions");
+   sender.sendMessage(ChatColor.DARK_AQUA + "   • " + ChatColor.AQUA + "/apexstaff reload" + ChatColor.DARK_GRAY + " - " + ChatColor.GRAY + "Reload plugin configuration");
+   sender.sendMessage(ChatColor.DARK_AQUA + "   • " + ChatColor.AQUA + "/apexstaff exstension <list|load|unload|reload>" + ChatColor.DARK_GRAY + " - " + ChatColor.GRAY + "Manage extensions");
+   sender.sendMessage("");
+   sender.sendMessage(ChatColor.DARK_GRAY + "▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬");
+   sender.sendMessage("");
  }
 
   public static ApexStaff getPlugin() {

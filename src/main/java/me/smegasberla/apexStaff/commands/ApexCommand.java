@@ -150,6 +150,9 @@ public class ApexCommand implements CommandExecutor, TabCompleter {
                     sender.sendMessage(noPermission);
                 }
                 break;
+            case "help":
+                plugin.sendHelpMessage(sender);
+                break;
 
             default:
                 plugin.sendHelpMessage(sender);
@@ -167,7 +170,7 @@ public class ApexCommand implements CommandExecutor, TabCompleter {
 
         if (args.length == 1) {
             List<String> subCommands = Arrays.asList(
-                    "reload", "vanish", "freeze", "xray", "fly", "clearchat",
+                    "reload","help", "vanish", "freeze", "xray", "fly", "clearchat",
                     "dupeip", "ping", "shadowcam", "notes", "staffchat", "exstension", "status"
             );
 
